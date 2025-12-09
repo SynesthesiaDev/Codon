@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Codon.Buffer\Codon.Buffer.csproj" />
-    </ItemGroup>
+      <ProjectReference Include="..\Codon.Codec\Codon.Codec.csproj" />
+  </ItemGroup>
 
 </Project>

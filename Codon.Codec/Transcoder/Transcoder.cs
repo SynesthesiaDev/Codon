@@ -32,7 +32,7 @@ public interface Transcoder<T>
     public List<T> DecodeList(T value);
 
     public IVirtualMapBuilder<T> EncodeMap();
-    public IVirtualMap<T> DecodeMap();
+    public IVirtualMap<T> DecodeMap(T value);
 
     public T EmptyMap() => EncodeMap().Build();
 
