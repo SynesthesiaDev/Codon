@@ -1,6 +1,6 @@
 namespace Codon.Codec.Transcoder;
 
-public interface Transcoder<T>
+public interface ITranscoder<T>
 {
     public T EncodeNull();
 

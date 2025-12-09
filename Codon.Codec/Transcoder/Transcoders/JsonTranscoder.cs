@@ -3,9 +3,10 @@ using System.Text.Json.Nodes;
 
 namespace Codon.Codec.Transcoder.Transcoders;
 
-public class JsonTranscoder : Transcoder<JsonElement>
+public class JsonTranscoder : ITranscoder<JsonElement>
 {
     private static readonly JsonDocumentOptions DocumentOptions = new() { AllowTrailingCommas = true };
+    public static JsonTranscoder Instance = new JsonTranscoder();
 
     private static JsonElement SerializeValue<T>(T? value)
     {

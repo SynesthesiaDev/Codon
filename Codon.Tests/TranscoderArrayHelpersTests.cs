@@ -6,7 +6,7 @@ namespace Codon.Tests;
 
 public class TranscoderArrayHelpersTests
 {
-    private readonly Transcoder<JsonElement> _t = new JsonTranscoder();
+    private readonly ITranscoder<JsonElement> _t = new JsonTranscoder();
 
     [Test]
     public void EncodeDecode_ByteArray_RoundTrip()
