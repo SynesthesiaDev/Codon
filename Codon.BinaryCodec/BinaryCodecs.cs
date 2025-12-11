@@ -11,39 +11,8 @@ namespace Codon.Binary;
 
 public static class BinaryCodecs
 {
-    public static readonly BooleanBinaryCodec Boolean = new();
 
-    public static readonly ByteBinaryCodec Byte = new();
-
-    public static readonly IntBinaryCodec Int = new();
-
-    public static readonly LongBinaryCodec Long = new();
-
-    public static readonly DoubleBinaryCodec Double = new();
-
-    public static readonly FloatBinaryCodec Float = new();
-
-    public static readonly VarIntBinaryCodec VarInt = new();
-
-    public static readonly ByteArrayBinaryCodec ByteArray = new();
-
-    public static readonly BinaryBufferBinaryCodec BinaryBuffer = new();
-
-    public static readonly RawBytesBinaryCodec RawBytes = new();
-
-    public static readonly StringBinaryCodec String = new();
-
-    public static RecursiveBinaryCodec<T> Recursive<T>(Func<IBinaryCodec<T>, IBinaryCodec<T>> self) where T : notnull
-    {
-        return new RecursiveBinaryCodec<T>(self);
-    }
-
-    public static EnumBinaryCodec<E> Enum<E>() where E : Enum
-    {
-        return new EnumBinaryCodec<E>();
-    }
-
-    public class BooleanBinaryCodec : IBinaryCodec<bool>
+    public class BooleanBinaryCodec : BinaryCodec<bool>
     {
         public void Write(BinaryBuffer buffer, bool value)
         {
@@ -56,7 +25,7 @@ public static class BinaryCodecs
         }
     }
 
-    public class ByteBinaryCodec : IBinaryCodec<byte>
+    public class ByteBinaryCodec : BinaryCodec<byte>
     {
         public void Write(BinaryBuffer buffer, byte value)
         {
@@ -69,7 +38,7 @@ public static class BinaryCodecs
         }
     }
 
-    public class IntBinaryCodec : IBinaryCodec<int>
+    public class IntBinaryCodec : BinaryCodec<int>
     {
         public void Write(BinaryBuffer buffer, int value)
         {
@@ -82,7 +51,7 @@ public static class BinaryCodecs
         }
     }
 
-    public class LongBinaryCodec : IBinaryCodec<long>
+    public class LongBinaryCodec : BinaryCodec<long>
     {
         public void Write(BinaryBuffer buffer, long value)
         {
@@ -95,7 +64,7 @@ public static class BinaryCodecs
         }
     }
 
-    public class FloatBinaryCodec : IBinaryCodec<float>
+    public class FloatBinaryCodec : BinaryCodec<float>
     {
         public void Write(BinaryBuffer buffer, float value)
         {
@@ -108,7 +77,7 @@ public static class BinaryCodecs
         }
     }
 
-    public class DoubleBinaryCodec : IBinaryCodec<double>
+    public class DoubleBinaryCodec : BinaryCodec<double>
     {
         public void Write(BinaryBuffer buffer, double value)
         {
@@ -121,7 +90,7 @@ public static class BinaryCodecs
         }
     }
 
-    public class VarIntBinaryCodec : IBinaryCodec<int>
+    public class VarIntBinaryCodec : BinaryCodec<int>
     {
         private const int SEGMENT_BITS = 0x7F;
         private const int CONTINUE_BIT = 0x80;
@@ -165,56 +134,56 @@ public static class BinaryCodecs
         }
     }
 
-    public class ByteArrayBinaryCodec : IBinaryCodec<byte[]>
+    public class ByteArrayBinaryCodec : BinaryCodec<byte[]>
     {
         public void Write(BinaryBuffer buffer, byte[] value)
         {
-            VarInt.Write(buffer, value.Length);
+            BinaryCodec.VarInt.Write(buffer, value.Length);
             buffer.WriteBytes(value);
         }
 
         public byte[] Read(BinaryBuffer buffer)
         {
-            var size = VarInt.Read(buffer);
+            var size = BinaryCodec.VarInt.Read(buffer);
             return buffer.ReadBytes(size).ToArray();
         }
     }
 
-    public class BinaryBufferBinaryCodec : IBinaryCodec<BinaryBuffer>
+    public class BinaryBufferBinaryCodec : BinaryCodec<BinaryBuffer>
     {
         public void Write(BinaryBuffer buffer, BinaryBuffer value)
         {
             var array = value.ToArray();
-            VarInt.Write(buffer, array.Length);
+            BinaryCodec.VarInt.Write(buffer, array.Length);
             buffer.WriteBytes(array);
         }
 
         public BinaryBuffer Read(BinaryBuffer buffer)
         {
-            var size = VarInt.Read(buffer);
+            var size = BinaryCodec.VarInt.Read(buffer);
             return buffer.ReadBytes(size).ToArray().ToBinaryBuffer();
         }
     }
 
-    public class StringBinaryCodec : IBinaryCodec<string>
+    public class StringBinaryCodec : BinaryCodec<string>
     {
         public void Write(BinaryBuffer buffer, string value)
         {
             var stringBytes = Encoding.UTF8.GetBytes(value);
-            VarInt.Write(buffer, stringBytes.Length);
+            BinaryCodec.VarInt.Write(buffer, stringBytes.Length);
             buffer.WriteBytes(stringBytes);
         }
 
         public string Read(BinaryBuffer buffer)
         {
-            var size = VarInt.Read(buffer);
+            var size = BinaryCodec.VarInt.Read(buffer);
             if (size < 0) throw new InvalidDataException("String cannot have negative length");
             var stringBytes = buffer.ReadBytes(size);
             return Encoding.UTF8.GetString(stringBytes);
         }
     }
 
-    public class RawBytesBinaryCodec : IBinaryCodec<byte[]>
+    public class RawBytesBinaryCodec : BinaryCodec<byte[]>
     {
         public void Write(BinaryBuffer buffer, byte[] value)
         {
@@ -227,21 +196,21 @@ public static class BinaryCodecs
         }
     }
 
-    public class OptionalBinaryCodec<T>(IBinaryCodec<T> innerCodec) : IBinaryCodec<T?> where T : notnull
+    public class OptionalBinaryCodec<T>(BinaryCodec<T> innerCodec) : BinaryCodec<T?> where T : notnull
     {
         public void Write(BinaryBuffer buffer, T? value)
         {
-            Boolean.Write(buffer, value != null);
+            BinaryCodec.Boolean.Write(buffer, value != null);
             if (value != null) innerCodec.Write(buffer, value);
         }
 
         public T? Read(BinaryBuffer buffer)
         {
-            return Boolean.Read(buffer) ? innerCodec.Read(buffer) : default;
+            return BinaryCodec.Boolean.Read(buffer) ? innerCodec.Read(buffer) : default;
         }
     }
 
-    public class DefaultBinaryCodec<T>(IBinaryCodec<T> innerCodec, T defaultValue) : IBinaryCodec<T> where T : notnull
+    public class DefaultBinaryCodec<T>(BinaryCodec<T> innerCodec, T defaultValue) : BinaryCodec<T> where T : notnull
     {
         public void Write(BinaryBuffer buffer, T? value)
         {
@@ -250,11 +219,11 @@ public static class BinaryCodecs
 
         public T Read(BinaryBuffer buffer)
         {
-            return Boolean.Read(buffer) ? innerCodec.Read(buffer) : defaultValue;
+            return BinaryCodec.Boolean.Read(buffer) ? innerCodec.Read(buffer) : defaultValue;
         }
     }
 
-    public class TransformativeBinaryCodec<T, S>(IBinaryCodec<T> innerCodec, Func<S, T> from, Func<T, S> to) : IBinaryCodec<S> where S : notnull where T : notnull
+    public class TransformativeBinaryCodec<T, S>(BinaryCodec<T> innerCodec, Func<S, T> from, Func<T, S> to) : BinaryCodec<S> where S : notnull where T : notnull
     {
         public void Write(BinaryBuffer buffer, S value)
         {
@@ -268,11 +237,11 @@ public static class BinaryCodecs
         }
     }
 
-    public class DictionaryBinaryCodec<K, V>(IBinaryCodec<K> keyCodec, IBinaryCodec<V> valueCodec) : IBinaryCodec<Dictionary<K, V>> where K : notnull where V : notnull
+    public class DictionaryBinaryCodec<K, V>(BinaryCodec<K> keyCodec, BinaryCodec<V> valueCodec) : BinaryCodec<Dictionary<K, V>> where K : notnull where V : notnull
     {
         public void Write(BinaryBuffer buffer, Dictionary<K, V> value)
         {
-            VarInt.Write(buffer, value.Count);
+            BinaryCodec.VarInt.Write(buffer, value.Count);
             foreach (var keyValuePair in value)
             {
                 keyCodec.Write(buffer, keyValuePair.Key);
@@ -283,7 +252,7 @@ public static class BinaryCodecs
         public Dictionary<K, V> Read(BinaryBuffer buffer)
         {
             var dict = new Dictionary<K, V>();
-            var size = VarInt.Read(buffer); // how big is my dict...
+            var size = BinaryCodec.VarInt.Read(buffer); // how big is my dict...
 
             for (var i = 0; i < size; i++)
             {
@@ -296,18 +265,18 @@ public static class BinaryCodecs
         }
     }
 
-    public class ListBinaryCodec<T>(IBinaryCodec<T> innerCodec) : IBinaryCodec<List<T>> where T : notnull
+    public class ListBinaryCodec<T>(BinaryCodec<T> innerCodec) : BinaryCodec<List<T>> where T : notnull
     {
         public void Write(BinaryBuffer buffer, List<T> value)
         {
-            VarInt.Write(buffer, value.Count);
+            BinaryCodec.VarInt.Write(buffer, value.Count);
             value.ForEach(item => innerCodec.Write(buffer, item));
         }
 
         public List<T> Read(BinaryBuffer buffer)
         {
             var list = new List<T>();
-            var size = VarInt.Read(buffer);
+            var size = BinaryCodec.VarInt.Read(buffer);
 
             for (var i = 0; i < size; i++) list.Add(innerCodec.Read(buffer));
 
@@ -315,7 +284,7 @@ public static class BinaryCodecs
         }
     }
 
-    public class UnionBinaryCodec<T, K>(IBinaryCodec<K> keyCodec, Func<T, K> keyFunc, Func<K, IBinaryCodec<T>> serializerFactory) : IBinaryCodec<T>
+    public class UnionBinaryCodec<T, K>(BinaryCodec<K> keyCodec, Func<T, K> keyFunc, Func<K, BinaryCodec<T>> serializerFactory) : BinaryCodec<T>
     {
         public void Write(BinaryBuffer buffer, T value)
         {
@@ -334,13 +303,13 @@ public static class BinaryCodecs
         }
     }
 
-    public class RecursiveBinaryCodec<T> : IBinaryCodec<T> where T : notnull
+    public class RecursiveBinaryCodec<T> : BinaryCodec<T> where T : notnull
     {
-        private readonly Lazy<IBinaryCodec<T>> _delegate;
+        private readonly Lazy<BinaryCodec<T>> _delegate;
 
-        public RecursiveBinaryCodec(Func<IBinaryCodec<T>, IBinaryCodec<T>> self)
+        public RecursiveBinaryCodec(Func<BinaryCodec<T>, BinaryCodec<T>> self)
         {
-            _delegate = new Lazy<IBinaryCodec<T>>(() => self.Invoke(this));
+            _delegate = new Lazy<BinaryCodec<T>>(() => self.Invoke(this));
         }
 
         public void Write(BinaryBuffer buffer, T value)
@@ -354,19 +323,19 @@ public static class BinaryCodecs
         }
     }
 
-    public class EnumBinaryCodec<E> : IBinaryCodec<E> where E : Enum
+    public class EnumBinaryCodec<E> : BinaryCodec<E> where E : Enum
     {
         private Array _entries = System.Enum.GetValues(typeof(E));
 
         public void Write(BinaryBuffer buffer, E value)
         {
             var ordinal = Array.IndexOf(_entries, value);
-            VarInt.Write(buffer, ordinal);
+            BinaryCodec.VarInt.Write(buffer, ordinal);
         }
 
         public E Read(BinaryBuffer buffer)
         {
-            var ordinal = VarInt.Read(buffer);
+            var ordinal = BinaryCodec.VarInt.Read(buffer);
             if (ordinal < 0 || ordinal >= _entries.Length) throw new IndexOutOfRangeException($"Ordinal {ordinal} is outside the range [0, {_entries.Length - 1}] for enum {typeof(E).Name}");
 
             return (E)_entries.GetValue(ordinal)!;

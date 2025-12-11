@@ -90,24 +90,25 @@ public static class Codecs
         }
     }
 
-    public class OptionalCodec<T>(ICodec<T> innerCodec) : ICodec<T?>
+    public class OptionalCodec<T>(ICodec<T> innerCodec) : ICodec<Optional<T>>
     {
         public readonly ICodec<T> Inner = innerCodec;
 
-        public D Encode<D>(ITranscoder<D> transcoder, T? value)
+        public D Encode<D>(ITranscoder<D> transcoder, Optional<T> value)
         {
-            return value == null ? transcoder.EncodeNull() : Inner.Encode(transcoder, value);
+            return value.IsMissing ? transcoder.EncodeNull() : Inner.Encode(transcoder, value.Value!);
         }
 
-        public T? Decode<D>(ITranscoder<D> transcoder, D value)
+        public Optional<T> Decode<D>(ITranscoder<D> transcoder, D value)
         {
             try
             {
-                return Inner.Decode(transcoder, value);
+                var decoded = Inner.Decode(transcoder, value);
+                return new Optional<T>(decoded);
             }
             catch (Exception e)
             {
-                return default;
+                return Optional.Empty<T>();
             }
         }
     }
@@ -163,7 +164,7 @@ public static class Codecs
         {
             var listResult = transcoder.DecodeList(value);
             var decodedList = new List<T>();
-            listResult.ForEach(item => innerCodec.Decode(transcoder, item));
+            listResult.ForEach(item => decodedList.Add(innerCodec.Decode(transcoder, item)));
             return decodedList;
         }
     }
@@ -221,7 +222,7 @@ public static class Codecs
     {
         public D Encode<D>(ITranscoder<D> transcoder, E value)
         {
-            return String.Encode(transcoder, nameof(value));
+            return String.Encode(transcoder, value.ToString());
         }
 
         public E Decode<D>(ITranscoder<D> transcoder, D value)

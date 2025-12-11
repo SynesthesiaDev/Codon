@@ -13,7 +13,6 @@ public class TranscoderArrayHelpersTests
     {
         var input = new byte[] { 0, 1, 2, 3, 254, 255 };
         var encoded = _t.EncodeByteArray(input);
-        // ensure it is JSON array
         Assert.That(encoded.ValueKind, Is.EqualTo(JsonValueKind.Array));
         var decoded = _t.DecodeByteArray(encoded);
         Assert.That(decoded, Is.EqualTo(input));

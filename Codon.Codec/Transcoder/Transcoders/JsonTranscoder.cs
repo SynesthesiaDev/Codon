@@ -155,6 +155,57 @@ public class JsonTranscoder : ITranscoder<JsonElement>
         return value.GetString() ?? throw new InvalidOperationException();
     }
 
+    public JsonElement EncodeByteArray(byte[] array)
+    {
+        var list = EncodeList(array.Length);
+        foreach (var b in array)
+        {
+            list.Add(EncodeByte(b));
+        }
+        return list.Build();
+    }
+
+    public byte[] DecodeByteArray(JsonElement value)
+    {
+        var bytes = new List<byte>();
+        DecodeList(value).ForEach(elem => bytes.Add(DecodeByte(elem)));
+        return bytes.ToArray();
+    }
+
+    public JsonElement EncodeIntArray(int[] array)
+    {
+        var list = EncodeList(array.Length);
+        foreach (var i in array)
+        {
+            list.Add(EncodeInt(i));
+        }
+        return list.Build();
+    }
+
+    public int[] DecodeIntArray(JsonElement value)
+    {
+        var ints = new List<int>();
+        DecodeList(value).ForEach(elem => ints.Add(DecodeInt(elem)));
+        return ints.ToArray();
+    }
+
+    public JsonElement EncodeLongArray(long[] array)
+    {
+        var list = EncodeList(array.Length);
+        foreach (var l in array)
+        {
+            list.Add(EncodeLong(l));
+        }
+        return list.Build();
+    }
+
+    public long[] DecodeLongArray(JsonElement value)
+    {
+        var longs = new List<long>();
+        DecodeList(value).ForEach(elem => longs.Add(DecodeLong(elem)));
+        return longs.ToArray();
+    }
+
     public IListBuilder<JsonElement> EncodeList(int size)
     {
         var list = new JsonArray();
