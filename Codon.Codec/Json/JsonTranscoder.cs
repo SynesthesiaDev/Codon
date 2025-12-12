@@ -214,8 +214,13 @@ public class JsonTranscoder : ITranscoder<JsonElement>
 
     public List<JsonElement> DecodeList(JsonElement value)
     {
-        var array = value.ToArray();
-        return array == null ? throw new InvalidOperationException("JsonElement is not JsonArray") : array.ToList().Select(node => SerializeValue(node?.AsValue())).ToList();
+        if (value.ValueKind != JsonValueKind.Array)
+        {
+            throw new InvalidOperationException("JsonElement is not JsonArray");
+        }
+
+        // Return a cloned list of elements preserving their structure (objects, arrays, values)
+        return value.EnumerateArray().Select(e => e.Clone()).ToList();
     }
 
     public IVirtualMapBuilder<JsonElement> EncodeMap()

@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Codon.Codec.Transcoder;
 
 namespace Codon.Codec;
@@ -74,6 +73,11 @@ public static class Codecs
     public static EnumCodec<E> Enum<E>() where E : Enum
     {
         return new EnumCodec<E>();
+    }
+
+    public static RecursiveCodec<T> Recursive<T>(Func<ICodec<T>, ICodec<T>> self)
+    {
+        return new RecursiveCodec<T>(self);
     }
 
     public class TransformativeCodec<T, S>(ICodec<T> innerCodec, Func<T, S> to, Func<S, T> from) : ICodec<S>
@@ -228,6 +232,27 @@ public static class Codecs
         public E Decode<D>(ITranscoder<D> transcoder, D value)
         {
             return (E)System.Enum.Parse(typeof(E), String.Decode(transcoder, value));
+        }
+    }
+
+    public class RecursiveCodec<T> : ICodec<T>
+    {
+        private Lazy<ICodec<T>> Delegate;
+        public ICodec<T> Inner => Delegate.Value;
+
+        public RecursiveCodec(Func<ICodec<T>, ICodec<T>> self)
+        {
+            Delegate = new Lazy<ICodec<T>>(self.Invoke(this));
+        }
+
+        public D Encode<D>(ITranscoder<D> transcoder, T value)
+        {
+            return Delegate.Value.Encode(transcoder, value);
+        }
+
+        public T Decode<D>(ITranscoder<D> transcoder, D value)
+        {
+            return Delegate.Value.Decode(transcoder, value);
         }
     }
 }

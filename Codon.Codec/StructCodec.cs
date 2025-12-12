@@ -272,7 +272,7 @@ public abstract class StructCodec<R> : ICodec<R>
             {
                 Codecs.DefaultCodec<T> defaultCodec => defaultCodec.Inner,
                 Codecs.OptionalCodec<T> optionalCodec => optionalCodec.Inner,
-                //Todo Recursive
+                Codecs.RecursiveCodec<T> recursiveCodec => recursiveCodec.Inner,
                 _ => codec
             };
 
@@ -292,7 +292,7 @@ public abstract class StructCodec<R> : ICodec<R>
             {
                 Codecs.OptionalCodec<T> optionalCodec => optionalCodec.Inner,
                 Codecs.DefaultCodec<T> defaultCodec => defaultCodec.Inner,
-                //Todo Recursive
+                Codecs.RecursiveCodec<T> recursiveCodec => recursiveCodec.Inner,
                 _ => codec
             };
 
