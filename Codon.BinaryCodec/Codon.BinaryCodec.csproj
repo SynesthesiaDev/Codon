@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>12</LangVersion>
         <Nullable>enable</Nullable>
         <RootNamespace>Codon.Binary</RootNamespace>
     </PropertyGroup>
@@ -10,6 +10,7 @@
     <ItemGroup>
         <PackageReference Include="System.IO.Pipelines" Version="10.0.0"/>
         <ProjectReference Include="..\Codon.Buffer\Codon.Buffer.csproj"/>
+        <ProjectReference Include="..\Codon.Optional\Codon.Optional.csproj" />
     </ItemGroup>
 
 </Project>

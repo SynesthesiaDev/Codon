@@ -4,9 +4,10 @@ Codon is a lightweight codec library for .NET
 
 Codon has three packages:
 
-- `BinaryBuffer` - custom implementation of binary buffer, included in `BinaryCodec` package
-- `BinaryCodec` - for serialization to binary format
-- `Codec` - for serialization into any format using transcoders (JSON included)
+- `Codon.BinaryBuffer` - custom implementation of binary buffer, included in `BinaryCodec` package
+- `Codon.BinaryCodec` - for serialization to binary format
+- `Codon.Codec` - for serialization into any format using transcoders (JSON included)
+- `Codon.Optional` - Optional class as replacement for nullability because nullable generics SUCK in C#
 
 ## Codecs
 
@@ -218,3 +219,97 @@ This would be encoded as following:
 
 See the test suite under `Codon.Tests` for broader coverage (lists, maps, enums, unions, forward refs, array helpers,
 etc.).
+
+## BinaryCodecs
+
+BinaryCodecs work with a BinaryBuffer and have a
+similar API to normal codecs (Optional, Default, List, MapTo, Transform, Enum, Recursive, and composite Of helpers).
+
+Quick roundtrip with primitives:
+
+```csharp
+using Codon.Binary;
+using Codon.Buffer;
+
+var buf = new BinaryBuffer();
+
+// Write
+BinaryCodec.Int.Write(buf, 42);
+BinaryCodec.String.Write(buf, "hello");
+BinaryCodec.Boolean.Write(buf, true);
+
+// Read back in the same order
+var int = BinaryCodec.Int.Read(buf);       // 42
+var string = BinaryCodec.String.Read(buf); // "hello"
+var bool = BinaryCodec.Boolean.Read(buf);  // true
+```
+
+Lists, maps, optionals, enums:
+
+```csharp
+// List and Dictionary helpers
+var listCodec = BinaryCodec.Int.List(); // IBinaryCodec<List<int>>
+var mapCodec  = BinaryCodec.String.MapTo(BinaryCodec.Int); // IBinaryCodec<Dictionary<string,int>>
+
+var list = new List<int> { 1, 2, 3 };
+listCodec.Write(buffer, list);
+var listBack = listCodec.Read(buffer);
+
+// Optional
+var optInt = BinaryCodec.Int.Optional();
+optInt.Write(buffer, Optional.Of(123));
+var readOpt = optInt.Read(buffer); // present 123
+
+// Enums
+enum Color { Red, Green, Blue }
+var colorCodec = BinaryCodec.Enum<Color>();
+colorCodec.Write(buffer, Color.Green);
+var color = colorCodec.Read(buffer); // Color.Green
+```
+
+Composite codecs (struct-like) using Of(...):
+
+```csharp
+public record Person(string name, int age, bool active)
+{
+    public static readonly IBinaryCodec<Person> Codec = BinaryCodec.Of(
+        BinaryCodec.String, p => p.name,
+        BinaryCodec.Int, p => p.age,
+        BinaryCodec.Boolean, p => p.active,
+        (name, age, active) => new Person(name, age, active)
+    );
+}
+
+Person.Codec.Write(buffer, new Person("Alice", 30, true));
+var person = Person.Codec.Read(buffer);
+```
+
+Transform between types:
+
+```csharp
+// Store a string as its length using the inner Int codec
+var lengthAsString = BinaryCodec.Int.Transform(
+    from: (string s) => s.Length,
+    to:   (int n)    => new string('x', n)
+);
+
+lengthAsString.Write(buffer, "abcde");
+var restored = lengthAsString.Read(buffer); //
+```
+
+Recursive structures are supported via `BinaryCodec.Recursive(self => ...)`:
+
+```csharp
+public record Node(string name, List<Node> children)
+{
+    public static readonly IBinaryCodec<Node> Codec = BinaryCodec.Recursive<Node>(self =>
+        BinaryCodec.Of(
+            BinaryCodec.String, n => n.name,
+            self.List(),        n => n.children,
+            (name, children) => new Node(name, children)
+        )
+    );
+}
+```
+---
+BinaryBuffer has helpers like `ToArray()`/`FromArray` and `ReaderIndex`/`WriterIndex` if you need more control over IO.
