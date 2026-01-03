@@ -110,7 +110,7 @@ public class ListMapEnumAndMoreCodecTests
         }
     }
 
-    private static readonly StructCodec<Shape> ShapeCodec = ((ICodec<Kind>)Codecs.Enum<Kind>()).Union<Shape>(
+    private static readonly StructCodec<Shape> ShapeCodec = Codecs.Enum<Kind>().Union<Shape>(
         keyField: "kind",
         serializers: kind => kind switch
         {

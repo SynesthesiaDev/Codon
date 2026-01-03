@@ -1,44 +1,44 @@
 using Codon.Codec.Transcoder;
+using Codon.Optionals;
 
 namespace Codon.Codec;
 
-public interface ICodec<T>
+public interface ICodec<T> where T : notnull
 {
     public D Encode<D>(ITranscoder<D> transcoder, T value);
     public T Decode<D>(ITranscoder<D> transcoder, D value);
 
-
-    public Codecs.OptionalCodec<T> Optional()
+    public ICodec<Optional<T>> Optional()
     {
         return new Codecs.OptionalCodec<T>(this);
     }
 
-    public Codecs.DefaultCodec<T> Default(T value)
+    public ICodec<T> Default(T value)
     {
         return new Codecs.DefaultCodec<T>(this, value);
     }
 
-    public Codecs.ListCodec<T> List()
+    public ICodec<List<T>> List()
     {
         return new Codecs.ListCodec<T>(this);
     }
 
-    public Codecs.MapCodec<T, V> MapTo<V>(ICodec<V> valueCodec)
+    public ICodec<Dictionary<T, V>> MapTo<V>(ICodec<V> valueCodec) where V : notnull
     {
         return new Codecs.MapCodec<T, V>(this, valueCodec);
     }
 
-    public Codecs.ForwardRefCodec<T> ForwardRef()
+    public ICodec<T> ForwardRef()
     {
         return new Codecs.ForwardRefCodec<T>(() => this);
     }
 
-    public Codecs.TransformativeCodec<T, S> Transform<S>(Func<T, S> to, Func<S, T> from)
+    public ICodec<S> Transform<S>(Func<T, S> to, Func<S, T> from) where S : notnull
     {
         return new Codecs.TransformativeCodec<T, S>(this, to, from);
     }
 
-    public Codecs.UnionCodec<T, R> Union<R>(string keyField, Func<T, StructCodec<R>> serializers, Func<R, T> keyFunc)
+    public StructCodec<R> Union<R>(string keyField, Func<T, StructCodec<R>> serializers, Func<R, T> keyFunc) where R : notnull
     {
         return new Codecs.UnionCodec<T, R>(keyField, this, serializers, keyFunc);
     }

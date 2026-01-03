@@ -2,23 +2,22 @@
 
     <PropertyGroup>
         <Authors>SynesthesiaDev_</Authors>
-        <Description>A .NET Codec library that can serialize into binary format</Description>
+        <Description>A .NET Codec library that can both serialize into binary format and any other format via custom transcoders</Description>
         <RepositoryUrl>https://github.com/SynesthesiaDev/Codon</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <IsPackable>true</IsPackable>
-        <PackageId>SynesthesiaDev.Codon.BinaryCodec</PackageId>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>SynesthesiaDev.Codon.Codon</PackageId>
         <Version>1.0.1</Version>
         
         <TargetFramework>net8.0</TargetFramework>
-        <LangVersion>12</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Codon.Binary</RootNamespace>
+        <RootNamespace>Codon.Codon</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Codon.Buffer\Codon.Buffer.csproj"/>
-        <ProjectReference Include="..\Codon.Optionals\Codon.Optionals.csproj" />
+        <ProjectReference Include="..\Codon.Codec\Codon.Codec.csproj" />
+        <ProjectReference Include="..\Codon.BinaryCodec\Codon.BinaryCodec.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,4 @@
-using System.Text.Json;
-
-namespace Codon.Codec;
+namespace Codon.Optionals;
 
 public class Optional<T>
 {

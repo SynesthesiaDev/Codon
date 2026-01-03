@@ -8,7 +8,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codon.Codec", "Codon.Codec\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codon.Tests", "Codon.Tests\Codon.Tests.csproj", "{9ED769DD-C101-4553-AC48-CD1C3660E0C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codon.Optional", "Codon.Optional\Codon.Optional.csproj", "{8F4372DC-7E7A-4851-9B0B-1E81978CDBC6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codon.Optionals", "Codon.Optionals\Codon.Optionals.csproj", "{8F4372DC-7E7A-4851-9B0B-1E81978CDBC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codon.Codon", "Codon.Codon\Codon.Codon.csproj", "{7E90324A-452F-418E-8EDB-9443E494A111}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codon.IniTranscoder", "Codon.IniTranscoder\Codon.IniTranscoder.csproj", "{5797D492-E412-4EA2-8E05-A3F404276A9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +40,13 @@ Global
 		{8F4372DC-7E7A-4851-9B0B-1E81978CDBC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F4372DC-7E7A-4851-9B0B-1E81978CDBC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F4372DC-7E7A-4851-9B0B-1E81978CDBC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E90324A-452F-418E-8EDB-9443E494A111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E90324A-452F-418E-8EDB-9443E494A111}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E90324A-452F-418E-8EDB-9443E494A111}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E90324A-452F-418E-8EDB-9443E494A111}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5797D492-E412-4EA2-8E05-A3F404276A9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5797D492-E412-4EA2-8E05-A3F404276A9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5797D492-E412-4EA2-8E05-A3F404276A9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5797D492-E412-4EA2-8E05-A3F404276A9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

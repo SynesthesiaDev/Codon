@@ -1,14 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <Authors>SynesthesiaDev_</Authors>
+        <Description>Utlity library containig BinaryBuffer for Codon.BinaryCodec</Description>
+        <RepositoryUrl>https://github.com/SynesthesiaDev/Codon</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <IsPackable>true</IsPackable>
+        <PackageId>SynesthesiaDev.Codon.Buffer</PackageId>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Version>1.0.1</Version>
+
         <TargetFramework>net8.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <RootNamespace>Codon.Buffer</RootNamespace>
     </PropertyGroup>
-
-    <ItemGroup>
-      <PackageReference Include="System.IO.Pipelines" Version="10.0.0" />
-    </ItemGroup>
 
 </Project>

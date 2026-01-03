@@ -1,22 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Authors>SynesthesiaDev_</Authors>
-        <Description>A .NET Codec library that can serialize into any format via custom transcoders</Description>
+        <TargetFramework>net8.0</TargetFramework>
+        <Description>A Codon transcoder for INI format</Description>
         <RepositoryUrl>https://github.com/SynesthesiaDev/Codon</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <IsPackable>true</IsPackable>
-        <PackageId>SynesthesiaDev.Codon.Codec</PackageId>
+        <PackageId>SynesthesiaDev.Codon.IniTranscoder</PackageId>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Version>1.0.1</Version>
-        
-        <TargetFramework>net8.0</TargetFramework>
+
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>Codon.IniTranscoder</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Codon.Optionals\Codon.Optionals.csproj" />
+        <PackageReference Include="SynesthesiaUtils" Version="1.0.0"/>
+        <ProjectReference Include="..\Codon.Codec\Codon.Codec.csproj"/>
     </ItemGroup>
 
 </Project>

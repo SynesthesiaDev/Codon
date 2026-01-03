@@ -1,4 +1,5 @@
 using Codon.Codec.Transcoder;
+using Codon.Optionals;
 
 namespace Codon.Codec;
 
@@ -70,12 +71,12 @@ public static class Codecs
         (transcoder, o) => transcoder.DecodeLongArray(o)
     );
 
-    public static EnumCodec<E> Enum<E>() where E : Enum
+    public static ICodec<E> Enum<E>() where E : Enum
     {
         return new EnumCodec<E>();
     }
 
-    public static RecursiveCodec<T> Recursive<T>(Func<ICodec<T>, ICodec<T>> self)
+    public static ICodec<T> Recursive<T>(Func<ICodec<T>, ICodec<T>> self)
     {
         return new RecursiveCodec<T>(self);
     }

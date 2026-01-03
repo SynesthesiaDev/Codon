@@ -2,12 +2,13 @@
 
 Codon is a lightweight codec library for .NET
 
-Codon has three packages:
+Codon has five packages:
 
 - `Codon.BinaryBuffer` - custom implementation of binary buffer, included in `BinaryCodec` package
 - `Codon.BinaryCodec` - for serialization to binary format
 - `Codon.Codec` - for serialization into any format using transcoders (JSON included)
 - `Codon.Optional` - Optional class as replacement for nullability because nullable generics SUCK in C#
+- `Codon.IniTranscoder` - Optional package that includes transcoder for .ini format
 
 ## Codecs
 

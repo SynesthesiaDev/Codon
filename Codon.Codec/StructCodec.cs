@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Codon.Codec.Transcoder;
+using Codon.Optionals;
 
 namespace Codon.Codec;
 

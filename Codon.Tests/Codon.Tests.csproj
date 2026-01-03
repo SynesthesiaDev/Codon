@@ -19,12 +19,15 @@
 
     <ItemGroup>
         <Using Include="NUnit.Framework"/>
+        <EmbeddedResource Include="Resources\section_test.ini"/>
+        <EmbeddedResource Include="Resources\section_test_without_header.ini"/>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Codon.BinaryCodec\Codon.BinaryCodec.csproj" />
       <ProjectReference Include="..\Codon.Buffer\Codon.Buffer.csproj" />
       <ProjectReference Include="..\Codon.Codec\Codon.Codec.csproj" />
+      <ProjectReference Include="..\Codon.IniTranscoder\Codon.IniTranscoder.csproj" />
   </ItemGroup>
 
 </Project>
