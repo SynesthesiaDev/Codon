@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Codon.Codec;
+namespace Codon.Codec.Json;
 
 public static class JsonExtensions
 {

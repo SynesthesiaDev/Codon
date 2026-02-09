@@ -1,13 +1,12 @@
-using System.Text.Json;
 using Codon.Codec;
-using Codon.Codec.Transcoder.Transcoders;
+using Codon.Codec.Json;
 using Codon.Codec.Transcoder;
 
 namespace Codon.Tests;
 
 public class ListMapEnumAndMoreCodecTests
 {
-    private readonly JsonTranscoder _t = JsonTranscoder.Instance;
+    private readonly JsonTranscoder _t = JsonTranscoder.INSTANCE;
 
     [Test]
     public void List_Primitive_RoundTrip()

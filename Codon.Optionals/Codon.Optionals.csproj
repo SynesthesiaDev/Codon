@@ -16,4 +16,8 @@
         <RootNamespace>Codon.Optionals</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SynesthesiaUtils" Version="1.2.0" />
+    </ItemGroup>
+
 </Project>

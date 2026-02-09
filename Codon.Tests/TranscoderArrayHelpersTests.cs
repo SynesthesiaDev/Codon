@@ -1,6 +1,6 @@
 using System.Text.Json;
+using Codon.Codec.Json;
 using Codon.Codec.Transcoder;
-using Codon.Codec.Transcoder.Transcoders;
 
 namespace Codon.Tests;
 

@@ -1,3 +1,4 @@
+using System.Globalization;
 using Codon.Codec.Transcoder;
 using Codon.IniTranscoder.Elements;
 using Codon.IniTranscoder.Exceptions;
@@ -6,13 +7,13 @@ namespace Codon.IniTranscoder;
 
 public class IniTranscoder : ITranscoder<IIniElement>
 {
-    public static readonly IniTranscoder Instance = new();
+    public static readonly IniTranscoder INSTANCE = new();
 
-    private string? _nextSectionName;
+    private string? nextSectionName;
 
     public IniTranscoder Named(string name)
     {
-        _nextSectionName = name;
+        nextSectionName = name;
         return this;
     }
 
@@ -140,7 +141,7 @@ public class IniTranscoder : ITranscoder<IIniElement>
 
     public IIniElement EncodeFloat(float value)
     {
-        return new IniValue(value.ToString());
+        return new IniValue(value.ToString(CultureInfo.InvariantCulture));
     }
 
     public float DecodeFloat(IIniElement value)
@@ -150,7 +151,7 @@ public class IniTranscoder : ITranscoder<IIniElement>
 
     public IIniElement EncodeDouble(double value)
     {
-        return new IniValue(value.ToString());
+        return new IniValue(value.ToString(CultureInfo.InvariantCulture));
     }
 
     public double DecodeDouble(IIniElement value)
@@ -190,8 +191,8 @@ public class IniTranscoder : ITranscoder<IIniElement>
 
     public IVirtualMapBuilder<IIniElement> EncodeMap()
     {
-        var section = new IniSection(_nextSectionName, []);
-        _nextSectionName = null;
+        var section = new IniSection(nextSectionName, []);
+        nextSectionName = null;
         return new IniVirtualMapBuilder(section);
     }
 

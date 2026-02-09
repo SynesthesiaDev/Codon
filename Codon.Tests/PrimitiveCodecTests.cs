@@ -1,16 +1,16 @@
 using Codon.Codec;
-using Codon.Codec.Transcoder.Transcoders;
+using Codon.Codec.Json;
 
 namespace Codon.Tests;
 
 public class PrimitiveCodecTests
 {
-    private readonly JsonTranscoder _t = JsonTranscoder.Instance;
+    private readonly JsonTranscoder _t = JsonTranscoder.INSTANCE;
 
     private static void RoundTrip<T>(ICodec<T> codec, T value)
     {
-        var encoded = codec.Encode(JsonTranscoder.Instance, value);
-        var decoded = codec.Decode(JsonTranscoder.Instance, encoded);
+        var encoded = codec.Encode(JsonTranscoder.INSTANCE, value);
+        var decoded = codec.Decode(JsonTranscoder.INSTANCE, encoded);
         Assert.That(decoded, Is.EqualTo(value));
     }
 

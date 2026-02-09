@@ -306,35 +306,35 @@ public static class BinaryCodec
 
 public interface IBinaryCodec<T>
 {
-    public void Write(BinaryBuffer buffer, T value);
-    public T Read(BinaryBuffer buffer);
+    void Write(BinaryBuffer buffer, T value);
+    T Read(BinaryBuffer buffer);
 
-    public BinaryCodecs.OptionalBinaryCodec<T> Optional()
+    BinaryCodecs.OptionalBinaryCodec<T> Optional()
     {
         return new BinaryCodecs.OptionalBinaryCodec<T>(this);
     }
 
-    public BinaryCodecs.DefaultBinaryCodec<T> Default(T defaultValue)
+    BinaryCodecs.DefaultBinaryCodec<T> Default(T defaultValue)
     {
         return new BinaryCodecs.DefaultBinaryCodec<T>(this, defaultValue);
     }
 
-    public BinaryCodecs.TransformativeBinaryCodec<T, S> Transform<S>(Func<S, T> from, Func<T, S> to)
+    BinaryCodecs.TransformativeBinaryCodec<T, S> Transform<S>(Func<S, T> from, Func<T, S> to)
     {
         return new BinaryCodecs.TransformativeBinaryCodec<T, S>(this, from, to);
     }
 
-    public BinaryCodecs.DictionaryBinaryCodec<T, V> MapTo<V>(IBinaryCodec<V> valueCodec) where V : notnull
+    BinaryCodecs.DictionaryBinaryCodec<T, V> MapTo<V>(IBinaryCodec<V> valueCodec) where V : notnull
     {
         return new BinaryCodecs.DictionaryBinaryCodec<T, V>(this, valueCodec);
     }
 
-    public BinaryCodecs.ListBinaryCodec<T> List()
+    BinaryCodecs.ListBinaryCodec<T> List()
     {
         return new BinaryCodecs.ListBinaryCodec<T>(this);
     }
 
-    public BinaryCodecs.UnionBinaryCodec<K, T> Union<K>(Func<T, IBinaryCodec<K>> serializerFactory, Func<K, T> keyFunc) where K : notnull
+    BinaryCodecs.UnionBinaryCodec<K, T> Union<K>(Func<T, IBinaryCodec<K>> serializerFactory, Func<K, T> keyFunc) where K : notnull
     {
         return new BinaryCodecs.UnionBinaryCodec<K, T>(this, keyFunc, serializerFactory);
     }

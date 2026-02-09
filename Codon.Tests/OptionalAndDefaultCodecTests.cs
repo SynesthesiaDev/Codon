@@ -1,13 +1,13 @@
 using System.Text.Json;
 using Codon.Codec;
-using Codon.Codec.Transcoder.Transcoders;
+using Codon.Codec.Json;
 using Codon.Optionals;
 
 namespace Codon.Tests;
 
 public class OptionalAndDefaultCodecTests
 {
-    private readonly JsonTranscoder _t = JsonTranscoder.Instance;
+    private readonly JsonTranscoder _t = JsonTranscoder.INSTANCE;
 
     [Test]
     public void Optional_Present_RoundTrip()

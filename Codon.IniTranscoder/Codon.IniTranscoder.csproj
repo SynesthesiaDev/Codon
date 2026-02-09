@@ -16,8 +16,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="SynesthesiaUtils" Version="1.0.0"/>
         <ProjectReference Include="..\Codon.Codec\Codon.Codec.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SynesthesiaUtils" Version="1.2.0" />
     </ItemGroup>
 
 </Project>
