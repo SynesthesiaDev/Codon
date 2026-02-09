@@ -5,7 +5,7 @@ namespace Codon.Tests;
 
 public class IniTranscoderTests
 {
-    private IniTranscoder.IniTranscoder T => IniTranscoder.IniTranscoder.Instance;
+    private IniTranscoder.IniTranscoder T => IniTranscoder.IniTranscoder.INSTANCE;
 
     [Test]
     public void EncodeNull_ProducesNullValue()

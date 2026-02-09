@@ -216,6 +216,45 @@ This would be encoded as following:
   definitions.
 - Optional and Default wrappers help you model absent fields and fallback values.
 
+### Versioned Struct Codecs
+
+Versioned struct codecs (`VersionedStructCodec<R>`) tracks schema versions and automatically applies migrations:
+```csharp
+private const string old_person_json = "{\"display_name\":\"Synesthesia Dev\", \"is_awesome\":true}";
+
+public record Person(string Name, int Age, Optional<bool> IsAwesome)
+{
+    private static readonly StructCodec<Person> codec = StructCodec.Of (
+        "name", Codecs.String, p => p.Name,
+        "age", Codecs.Int, p => p.Age,
+        "is_awesome", Codecs.Boolean.Optional(), p => p.IsAwesome,
+        (name, age, someBoolean) => new Person(name, age, someBoolean) 
+    );
+    
+    // schema version 1: added "age" field
+    // schema version 2: renamed "display_name" to just "name"
+    
+    public static readonly VersionedStructCodec<Person> VERSIONED_CODEC = new VersionedStructCodec<Person>()
+    {
+        CurrentSchemaVersion = 2,
+        InnerCodec = Person.codec,
+        SchemaMigrationRegistry = SchemaMigrationRegistry.Builder()
+            // Specify for what transcoder type/format this migration is
+            .For<JsonElement>(migrations =>
+            {
+                // migration to version 1: ensure "age" exists
+                migrations.Add(1, (transcoder, _, output) => output.Put("age", transcoder.EncodeInt(0)));
+                // migration to version 2: copy "display_name" -> "name"
+                migrations.Add(2, (transcoder, input, output) =>
+                {
+                    var name = transcoder.DecodeString(input.GetValue("display_name"));
+                    output.Put("name", transcoder.EncodeString(name));
+                });
+            })
+    };
+}
+```
+
 ---
 
 See the test suite under `Codon.Tests` for broader coverage (lists, maps, enums, unions, forward refs, array helpers,

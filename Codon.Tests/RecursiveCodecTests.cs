@@ -1,5 +1,5 @@
 using Codon.Codec;
-using Codon.Codec.Transcoder.Transcoders;
+using Codon.Codec.Json;
 
 namespace Codon.Tests;
 
@@ -27,14 +27,14 @@ public class RecursiveCodecTests
             ]
         );
 
-        var encoded = Node.Codec.Encode(JsonTranscoder.Instance, tree);
+        var encoded = Node.Codec.Encode(JsonTranscoder.INSTANCE, tree);
 
         var json = encoded.GetRawText();
         Console.WriteLine(json);
         Assert.That(json, Does.Contain("\"name\":\"root\""));
         Assert.That(json, Does.Contain("\"children\""));
 
-        var decoded = Node.Codec.Decode(JsonTranscoder.Instance, encoded);
+        var decoded = Node.Codec.Decode(JsonTranscoder.INSTANCE, encoded);
 
         Assert.That(decoded.name, Is.EqualTo("root"));
         Assert.That(decoded.children, Has.Count.EqualTo(2));

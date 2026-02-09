@@ -7,12 +7,17 @@ public class IniValue(string? value) : IIniElement
 {
     public static IniValue Null => new(null);
 
-    public string? Value => value;
+    public readonly string? Value = value == "null" ? null : value;
 
     public override string ToString()
     {
         return Value ?? "null";
     }
+
+    // public static IniValue Parse(string? value)
+    // {
+    //     return value == "null" ? new IniValue(null) : new IniValue(value);
+    // }
 
     public T? GetOrNull<T>()
     {

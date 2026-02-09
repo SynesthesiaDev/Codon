@@ -20,4 +20,8 @@
         <ProjectReference Include="..\Codon.BinaryCodec\Codon.BinaryCodec.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SynesthesiaUtils" Version="1.2.0" />
+    </ItemGroup>
+
 </Project>

@@ -1,6 +1,5 @@
 using Codon.Buffer;
 using Codon.Binary;
-using Codon.Codec;
 using Codon.Optionals;
 
 namespace Codon.Tests;

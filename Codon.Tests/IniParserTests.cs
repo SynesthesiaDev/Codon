@@ -1,14 +1,14 @@
 using Codon.Codec;
 using Codon.IniTranscoder.Elements;
 using Codon.IniTranscoder.Util;
-using Codon.Tests.Util;
+using SynesthesiaUtil.Extensions;
 
 namespace Codon.Tests;
 
 public class IniParserTests
 {
-    private static string SectionTestText = AssemblyUtil.GetTextResource(AssemblyInfo.TestAssembly, "Codon.Tests.Resources.section_test.ini");
-    private static string SectionTestWithoutHeaderText = AssemblyUtil.GetTextResource(AssemblyInfo.TestAssembly, "Codon.Tests.Resources.section_test_without_header.ini");
+    private static readonly string section_test_text = AssemblyInfo.TestAssembly.GetTextResource("Codon.Tests.Resources.section_test.ini");
+    private static readonly string section_test_without_header_text = AssemblyInfo.TestAssembly.GetTextResource("Codon.Tests.Resources.section_test_without_header.ini");
 
     public record User(string Name, int Age, bool IsTester, List<string> Properties)
     {
@@ -26,7 +26,7 @@ public class IniParserTests
     public void TestTranscoder()
     {
         var user = new User("Synesthesia", 20, false, ["is_trans", "is_pan"]);
-        var ini = User.Codec.Encode(IniTranscoder.IniTranscoder.Instance, user);
+        var ini = User.Codec.Encode(IniTranscoder.IniTranscoder.INSTANCE, user);
         Console.WriteLine(ini);
     }
 
@@ -46,24 +46,24 @@ public class IniParserTests
 
         var newList = IniList.Parse(stringified);
         Console.WriteLine(newList.ToString());
-        Assert.AreEqual(stringified, newList.ToString());
+        Assert.That(newList.ToString(), Is.EqualTo(stringified));
     }
 
     [Test]
     public void TestSectionToString()
     {
-        var section = IniSection.Parse(SectionTestText);
+        var section = IniSection.Parse(section_test_text);
         var stringified = section.ToString();
 
         var newSection = IniSection.Parse(stringified);
         Console.WriteLine(stringified);
-        Assert.AreEqual(stringified, newSection.ToString());
+        Assert.That(newSection.ToString(), Is.EqualTo(stringified));
     }
 
     [Test]
     public void TestParseSection()
     {
-        var section = IniSection.Parse(SectionTestText);
+        var section = IniSection.Parse(section_test_text);
         foreach (var iniKeyValuePair in section.Values)
         {
             Console.WriteLine(iniKeyValuePair);
@@ -82,7 +82,7 @@ public class IniParserTests
     [Test]
     public void TestParseSectionWithoutHeader()
     {
-        var section = IniSection.Parse(SectionTestWithoutHeaderText);
+        var section = IniSection.Parse(section_test_without_header_text);
         foreach (var iniKeyValuePair in section.Values)
         {
             Console.WriteLine(iniKeyValuePair);

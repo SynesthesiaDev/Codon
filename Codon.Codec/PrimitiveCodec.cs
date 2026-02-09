@@ -2,15 +2,15 @@ using Codon.Codec.Transcoder;
 
 namespace Codon.Codec;
 
-public class PrimitiveCodec<A>(Func<dynamic, A, dynamic> Encoder, Func<dynamic, dynamic, A> Decoder) : ICodec<A>
+public class PrimitiveCodec<A>(Func<dynamic, A, dynamic> encoder, Func<dynamic, dynamic, A> decoder) : ICodec<A>
 {
     public D Encode<D>(ITranscoder<D> transcoder, A value)
     {
-        return (D)Encoder.Invoke((dynamic)transcoder, value);
+        return (D)encoder.Invoke((dynamic)transcoder, value);
     }
 
     public A Decode<D>(ITranscoder<D> transcoder, D value)
     {
-        return Decoder.Invoke((dynamic)transcoder, value);
+        return decoder.Invoke((dynamic)transcoder, value);
     }
 }

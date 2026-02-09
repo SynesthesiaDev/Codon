@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Codon.Codec.Transcoder;
 using Codon.Optionals;
 
@@ -249,7 +248,7 @@ public static class StructCodec
 
 public abstract class StructCodec<R> : ICodec<R>
 {
-    public const string Inline = "_inline_";
+    public const string INLINE = "_inline_";
 
     public abstract T EncodeToMap<T>(ITranscoder<T> transcoder, R value, IVirtualMapBuilder<T> mapBuilder);
 
@@ -265,9 +264,9 @@ public abstract class StructCodec<R> : ICodec<R>
         return DecodeFromMap(transcoder, transcoder.DecodeMap(value));
     }
 
-    private static D Put<D, T>(ITranscoder<D> transcoder, ICodec<T> codec, IVirtualMapBuilder<D> mapBuilder, string key, T value)
+    private static D put<D, T>(ITranscoder<D> transcoder, ICodec<T> codec, IVirtualMapBuilder<D> mapBuilder, string key, T value)
     {
-        if (key == Inline)
+        if (key == INLINE)
         {
             var encodeCodec = codec switch
             {
@@ -287,7 +286,7 @@ public abstract class StructCodec<R> : ICodec<R>
 
     public static T Get<D, T>(ITranscoder<D> transcoder, ICodec<T> codec, string key, IVirtualMap<D> map)
     {
-        if (key == Inline)
+        if (key == INLINE)
         {
             var decodeCodec = codec switch
             {
@@ -361,7 +360,7 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -380,8 +379,8 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -402,9 +401,9 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -427,10 +426,10 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -455,11 +454,11 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -486,12 +485,12 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
-            Put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -520,13 +519,13 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
-            Put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
-            Put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
+            put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -557,14 +556,14 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
-            Put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
-            Put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
-            Put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
+            put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
+            put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -597,15 +596,15 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
-            Put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
-            Put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
-            Put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
-            Put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
+            put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
+            put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
+            put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -640,16 +639,16 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
-            Put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
-            Put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
-            Put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
-            Put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
-            Put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
+            put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
+            put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
+            put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
+            put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -686,17 +685,17 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
-            Put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
-            Put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
-            Put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
-            Put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
-            Put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
-            Put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
+            put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
+            put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
+            put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
+            put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
+            put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -735,18 +734,18 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
-            Put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
-            Put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
-            Put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
-            Put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
-            Put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
-            Put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
-            Put(transcoder, codec12, mapBuilder, name12, getter12.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
+            put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
+            put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
+            put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
+            put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
+            put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
+            put(transcoder, codec12, mapBuilder, name12, getter12.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -787,19 +786,19 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
-            Put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
-            Put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
-            Put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
-            Put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
-            Put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
-            Put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
-            Put(transcoder, codec12, mapBuilder, name12, getter12.Invoke(value));
-            Put(transcoder, codec13, mapBuilder, name13, getter13.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
+            put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
+            put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
+            put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
+            put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
+            put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
+            put(transcoder, codec12, mapBuilder, name12, getter12.Invoke(value));
+            put(transcoder, codec13, mapBuilder, name13, getter13.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -842,20 +841,20 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
-            Put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
-            Put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
-            Put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
-            Put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
-            Put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
-            Put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
-            Put(transcoder, codec12, mapBuilder, name12, getter12.Invoke(value));
-            Put(transcoder, codec13, mapBuilder, name13, getter13.Invoke(value));
-            Put(transcoder, codec14, mapBuilder, name14, getter14.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
+            put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
+            put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
+            put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
+            put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
+            put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
+            put(transcoder, codec12, mapBuilder, name12, getter12.Invoke(value));
+            put(transcoder, codec13, mapBuilder, name13, getter13.Invoke(value));
+            put(transcoder, codec14, mapBuilder, name14, getter14.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -900,21 +899,21 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
-            Put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
-            Put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
-            Put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
-            Put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
-            Put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
-            Put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
-            Put(transcoder, codec12, mapBuilder, name12, getter12.Invoke(value));
-            Put(transcoder, codec13, mapBuilder, name13, getter13.Invoke(value));
-            Put(transcoder, codec14, mapBuilder, name14, getter14.Invoke(value));
-            Put(transcoder, codec15, mapBuilder, name15, getter15.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
+            put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
+            put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
+            put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
+            put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
+            put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
+            put(transcoder, codec12, mapBuilder, name12, getter12.Invoke(value));
+            put(transcoder, codec13, mapBuilder, name13, getter13.Invoke(value));
+            put(transcoder, codec14, mapBuilder, name14, getter14.Invoke(value));
+            put(transcoder, codec15, mapBuilder, name15, getter15.Invoke(value));
             return mapBuilder.Build();
         }
 
@@ -961,22 +960,22 @@ public abstract class StructCodec<R> : ICodec<R>
     {
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, Result value, IVirtualMapBuilder<T> mapBuilder)
         {
-            Put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
-            Put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
-            Put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
-            Put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
-            Put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
-            Put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
-            Put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
-            Put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
-            Put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
-            Put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
-            Put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
-            Put(transcoder, codec12, mapBuilder, name12, getter12.Invoke(value));
-            Put(transcoder, codec13, mapBuilder, name13, getter13.Invoke(value));
-            Put(transcoder, codec14, mapBuilder, name14, getter14.Invoke(value));
-            Put(transcoder, codec15, mapBuilder, name15, getter15.Invoke(value));
-            Put(transcoder, codec16, mapBuilder, name16, getter16.Invoke(value));
+            put(transcoder, codec1, mapBuilder, name1, getter1.Invoke(value));
+            put(transcoder, codec2, mapBuilder, name2, getter2.Invoke(value));
+            put(transcoder, codec3, mapBuilder, name3, getter3.Invoke(value));
+            put(transcoder, codec4, mapBuilder, name4, getter4.Invoke(value));
+            put(transcoder, codec5, mapBuilder, name5, getter5.Invoke(value));
+            put(transcoder, codec6, mapBuilder, name6, getter6.Invoke(value));
+            put(transcoder, codec7, mapBuilder, name7, getter7.Invoke(value));
+            put(transcoder, codec8, mapBuilder, name8, getter8.Invoke(value));
+            put(transcoder, codec9, mapBuilder, name9, getter9.Invoke(value));
+            put(transcoder, codec10, mapBuilder, name10, getter10.Invoke(value));
+            put(transcoder, codec11, mapBuilder, name11, getter11.Invoke(value));
+            put(transcoder, codec12, mapBuilder, name12, getter12.Invoke(value));
+            put(transcoder, codec13, mapBuilder, name13, getter13.Invoke(value));
+            put(transcoder, codec14, mapBuilder, name14, getter14.Invoke(value));
+            put(transcoder, codec15, mapBuilder, name15, getter15.Invoke(value));
+            put(transcoder, codec16, mapBuilder, name16, getter16.Invoke(value));
             return mapBuilder.Build();
         }
 

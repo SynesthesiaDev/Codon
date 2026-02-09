@@ -1,18 +1,20 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Codon.Codec.Transcoder;
 
-namespace Codon.Codec.Transcoder.Transcoders;
+namespace Codon.Codec.Json;
 
 public class JsonTranscoder : ITranscoder<JsonElement>
 {
-    private static readonly JsonDocumentOptions DocumentOptions = new() { AllowTrailingCommas = true };
-    public static JsonTranscoder Instance = new JsonTranscoder();
+    private static readonly JsonDocumentOptions document_options = new() { AllowTrailingCommas = true };
 
-    private static JsonElement SerializeValue<T>(T? value)
+    public static readonly JsonTranscoder INSTANCE = new();
+
+    private static JsonElement serializeValue<T>(T? value)
     {
         var bytes = JsonSerializer.SerializeToUtf8Bytes(value);
 
-        using var document = JsonDocument.Parse(bytes, DocumentOptions);
+        using var document = JsonDocument.Parse(bytes, document_options);
         return document.RootElement.Clone();
     }
 
@@ -26,7 +28,7 @@ public class JsonTranscoder : ITranscoder<JsonElement>
 
         public JsonElement Build()
         {
-            return SerializeValue(array);
+            return serializeValue(array);
         }
     }
 
@@ -46,7 +48,7 @@ public class JsonTranscoder : ITranscoder<JsonElement>
 
         public JsonElement Build()
         {
-            return SerializeValue(jsonObject);
+            return serializeValue(jsonObject);
         }
     }
 
@@ -66,18 +68,18 @@ public class JsonTranscoder : ITranscoder<JsonElement>
 
         public JsonElement GetValue(string key)
         {
-            return jsonObject == null ? throw new InvalidOperationException("JsonElement is not JsonObject") : SerializeValue(jsonObject.ToDictionary()[key]);
+            return jsonObject == null ? throw new InvalidOperationException("JsonElement is not JsonObject") : serializeValue(jsonObject.ToDictionary()[key]);
         }
     }
 
     public JsonElement EncodeNull()
     {
-        return SerializeValue<object>(null);
+        return serializeValue<object>(null);
     }
 
     public JsonElement EncodeBool(bool value)
     {
-        return SerializeValue(value);
+        return serializeValue(value);
     }
 
     public bool DecodeBool(JsonElement value)
@@ -87,7 +89,7 @@ public class JsonTranscoder : ITranscoder<JsonElement>
 
     public JsonElement EncodeByte(byte value)
     {
-        return SerializeValue(value);
+        return serializeValue(value);
     }
 
     public byte DecodeByte(JsonElement value)
@@ -97,7 +99,7 @@ public class JsonTranscoder : ITranscoder<JsonElement>
 
     public JsonElement EncodeShort(short value)
     {
-        return SerializeValue(value);
+        return serializeValue(value);
     }
 
     public short DecodeShort(JsonElement value)
@@ -107,7 +109,7 @@ public class JsonTranscoder : ITranscoder<JsonElement>
 
     public JsonElement EncodeInt(int value)
     {
-        return SerializeValue(value);
+        return serializeValue(value);
     }
 
     public int DecodeInt(JsonElement value)
@@ -117,7 +119,7 @@ public class JsonTranscoder : ITranscoder<JsonElement>
 
     public JsonElement EncodeLong(long value)
     {
-        return SerializeValue(value);
+        return serializeValue(value);
     }
 
     public long DecodeLong(JsonElement value)
@@ -127,7 +129,7 @@ public class JsonTranscoder : ITranscoder<JsonElement>
 
     public JsonElement EncodeFloat(float value)
     {
-        return SerializeValue(value);
+        return serializeValue(value);
     }
 
     public float DecodeFloat(JsonElement value)
@@ -137,7 +139,7 @@ public class JsonTranscoder : ITranscoder<JsonElement>
 
     public JsonElement EncodeDouble(double value)
     {
-        return SerializeValue(value);
+        return serializeValue(value);
     }
 
     public double DecodeDouble(JsonElement value)
@@ -147,7 +149,7 @@ public class JsonTranscoder : ITranscoder<JsonElement>
 
     public JsonElement EncodeString(string value)
     {
-        return SerializeValue(value);
+        return serializeValue(value);
     }
 
     public string DecodeString(JsonElement value)
