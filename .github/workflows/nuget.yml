@@ -16,19 +16,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-          fetch-depth: 0
 
       - name: Generate CalVer Version
         id: versioning
         run: |
           # Format: YYYY.MMDD.RunNumber
-          VERSION=$(date +'%Y.%-m%d').${{ github.run_number }}
+          DATE_PREFIX=$(date +'%Y.%-m%d')
+
+          git fetch --tags
+          REVISION=$(git tag -l "v${DATE_PREFIX}.*" | wc -l | xargs)
+
+          VERSION="${DATE_PREFIX}.${REVISION}"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Generated Version: $VERSION"
 
       - name: Restore dependencies
         run: dotnet restore
