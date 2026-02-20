@@ -8,7 +8,7 @@ namespace Codon.Tests;
 
 public class EdgeCasesTests
 {
-    private readonly Codecs.OptionalCodec<string> optionalString = new(Codecs.String);
+    private readonly Codecs.OptionalCodec<string> optionalString = new(Codecs.STRING);
 
     [Test]
     public void Test()

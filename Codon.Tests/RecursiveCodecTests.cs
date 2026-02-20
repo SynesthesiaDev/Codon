@@ -7,9 +7,9 @@ public class RecursiveCodecTests
 {
     public record Node(string name, List<Node> children)
     {
-        public static readonly ICodec<Node> Codec = Codecs.Recursive<Node>(self =>
+        public static readonly Codec<Node> Codec = Codecs.Recursive<Node>(self =>
             StructCodec.Of(
-                "name", Codecs.String, n => n.name,
+                "name", Codecs.STRING, n => n.name,
                 "children", self.List(), n => n.children,
                 (name, children) => new Node(name, children)
             )

@@ -25,7 +25,7 @@ public static class IniUtils
         return (index >= 0 && index < list.Count) ? list[index] : default;
     }
 
-    public static ICodec<T> WithSection<T>(this ICodec<T> codec, string sectionName) where T : notnull
+    public static Codec<T> WithSection<T>(this Codec<T> codec, string sectionName) where T : notnull
     {
         return new PrimitiveCodec<T>(
             (transcoder, value) =>

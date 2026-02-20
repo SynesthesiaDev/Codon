@@ -12,12 +12,12 @@ public class IniParserTests
 
     public record User(string Name, int Age, bool IsTester, List<string> Properties)
     {
-        public static readonly ICodec<User> Codec = StructCodec.Of
+        public static readonly Codec<User> Codec = StructCodec.Of
         (
-            "name", Codecs.String, u => u.Name,
-            "age", Codecs.Int, u => u.Age,
-            "is_tester", Codecs.Boolean, u => u.IsTester,
-            "properties", Codecs.String.List(), u => u.Properties,
+            "name", Codecs.STRING, u => u.Name,
+            "age", Codecs.INT, u => u.Age,
+            "is_tester", Codecs.BOOLEAN, u => u.IsTester,
+            "properties", Codecs.STRING.List(), u => u.Properties,
             (name, age, isTester, properties) => new User(name, age, isTester, properties)
         ).WithSection("User");
     }

@@ -1,6 +1,9 @@
 <Project>
   <PropertyGroup>
-    <Version>1.1.1</Version>
+    <Authors>SynesthesiaDev</Authors>
+    <RepositoryUrl>https://github.com/SynesthesiaDev/Codon</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 

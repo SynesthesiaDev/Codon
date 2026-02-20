@@ -12,7 +12,7 @@ public class OptionalAndDefaultCodecTests
     [Test]
     public void Optional_Present_RoundTrip()
     {
-        var codec = Codecs.Int.Optional();
+        var codec = Codecs.INT.Optional();
         var value = Optional.Of(42);
         var encoded = codec.Encode(_t, value);
         var decoded = codec.Decode(_t, encoded);
@@ -23,8 +23,8 @@ public class OptionalAndDefaultCodecTests
     private record OptHolder(int id, Optional<int> oi)
     {
         public static readonly StructCodec<OptHolder> Codec = StructCodec.Of(
-            "id", Codecs.Int, h => h.id,
-            "oi", Codecs.Int.Optional(), h => h.oi,
+            "id", Codecs.INT, h => h.id,
+            "oi", Codecs.INT.Optional(), h => h.oi,
             (id, oi) => new OptHolder(id, oi)
         );
     }
@@ -40,8 +40,8 @@ public class OptionalAndDefaultCodecTests
     private record DefHolder(int id, int x)
     {
         public static readonly StructCodec<DefHolder> Codec = StructCodec.Of(
-            "id", Codecs.Int, h => h.id,
-            "x", Codecs.Int.Default(5), h => h.x,
+            "id", Codecs.INT, h => h.id,
+            "x", Codecs.INT.Default(5), h => h.x,
             (id, x) => new DefHolder(id, x)
         );
     }

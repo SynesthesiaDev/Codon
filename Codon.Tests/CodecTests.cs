@@ -11,12 +11,23 @@ public class CodecTests
 
     public record Person(string name, int age, Optional<bool> isAwesome)
     {
-        public static readonly StructCodec<Person> Codec = StructCodec.Of
+        public static readonly Codec<Person> Codec = StructCodec.Of
         (
-            "name", Codecs.String, p => p.name,
-            "age", Codecs.Int, p => p.age,
-            "is_awesome", Codecs.Boolean.Optional(), p => p.isAwesome,
+            "name", Codecs.STRING, p => p.name,
+            "age", Codecs.INT, p => p.age,
+            "is_awesome", Codecs.BOOLEAN.Optional(), p => p.isAwesome,
             (name, age, someBoolean) => new Person(name, age, someBoolean)
+        );
+    }
+
+    public record Car(string Model, List<Person> Passengers, Optional<Person> Driver)
+    {
+        public static readonly StructCodec<Car> CODEC = StructCodec.Of
+        (
+            "model", Codecs.STRING, c => c.Model,
+            "passengers", Person.Codec.List(), c => c.Passengers,
+            "driver", Person.Codec.Optional(), c => c.Driver,
+            (model, passengers, driver) => new Car(model, passengers, driver)
         );
     }
 

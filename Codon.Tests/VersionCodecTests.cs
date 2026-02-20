@@ -15,9 +15,9 @@ public class VersionCodecTests
     {
         public static readonly StructCodec<Person> CODEC = StructCodec.Of
         (
-            "name", Codecs.String, p => p.Name,
-            "age", Codecs.Int, p => p.Age,
-            "is_awesome", Codecs.Boolean.Optional(), p => p.IsAwesome,
+            "name", Codecs.STRING, p => p.Name,
+            "age", Codecs.INT, p => p.Age,
+            "is_awesome", Codecs.BOOLEAN.Optional(), p => p.IsAwesome,
             (name, age, someBoolean) => new Person(name, age, someBoolean)
         );
 

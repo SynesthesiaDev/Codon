@@ -1,13 +1,14 @@
 using Codon.Codec.Transcoder;
 using Codon.Optionals;
+#pragma warning disable CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
 
 namespace Codon.Codec;
 
 public static class StructCodec
 {
     public static StructCodec<Result> Of<P1, P2, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
         Func<P1, P2, Result> func
     )
     {
@@ -15,9 +16,9 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
         Func<P1, P2, P3, Result> func
     )
     {
@@ -25,10 +26,10 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
         Func<P1, P2, P3, P4, Result> func
     )
     {
@@ -36,11 +37,11 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
         Func<P1, P2, P3, P4, P5, Result> func
     )
     {
@@ -48,12 +49,12 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, P6, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
         Func<P1, P2, P3, P4, P5, P6, Result> func
     )
     {
@@ -61,13 +62,13 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, P6, P7, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
         Func<P1, P2, P3, P4, P5, P6, P7, Result> func
     )
     {
@@ -75,14 +76,14 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, P6, P7, P8, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, Result> func
     )
     {
@@ -90,15 +91,15 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, P6, P7, P8, P9, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, Result> func
     )
     {
@@ -106,16 +107,16 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, Result> func
     )
     {
@@ -123,17 +124,17 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, Result> func
     )
     {
@@ -141,18 +142,18 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
-        string name12, ICodec<P12> codec12, Func<Result, P12> getter12,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
+        string name12, Codec<P12> codec12, Func<Result, P12> getter12,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, Result> func
     )
     {
@@ -160,19 +161,19 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
-        string name12, ICodec<P12> codec12, Func<Result, P12> getter12,
-        string name13, ICodec<P13> codec13, Func<Result, P13> getter13,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
+        string name12, Codec<P12> codec12, Func<Result, P12> getter12,
+        string name13, Codec<P13> codec13, Func<Result, P13> getter13,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, Result> func
     )
     {
@@ -180,20 +181,20 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
-        string name12, ICodec<P12> codec12, Func<Result, P12> getter12,
-        string name13, ICodec<P13> codec13, Func<Result, P13> getter13,
-        string name14, ICodec<P14> codec14, Func<Result, P14> getter14,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
+        string name12, Codec<P12> codec12, Func<Result, P12> getter12,
+        string name13, Codec<P13> codec13, Func<Result, P13> getter13,
+        string name14, Codec<P14> codec14, Func<Result, P14> getter14,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, Result> func
     )
     {
@@ -201,21 +202,21 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
-        string name12, ICodec<P12> codec12, Func<Result, P12> getter12,
-        string name13, ICodec<P13> codec13, Func<Result, P13> getter13,
-        string name14, ICodec<P14> codec14, Func<Result, P14> getter14,
-        string name15, ICodec<P15> codec15, Func<Result, P15> getter15,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
+        string name12, Codec<P12> codec12, Func<Result, P12> getter12,
+        string name13, Codec<P13> codec13, Func<Result, P13> getter13,
+        string name14, Codec<P14> codec14, Func<Result, P14> getter14,
+        string name15, Codec<P15> codec15, Func<Result, P15> getter15,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, Result> func
     )
     {
@@ -223,22 +224,22 @@ public static class StructCodec
     }
 
     public static StructCodec<Result> Of<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
-        string name12, ICodec<P12> codec12, Func<Result, P12> getter12,
-        string name13, ICodec<P13> codec13, Func<Result, P13> getter13,
-        string name14, ICodec<P14> codec14, Func<Result, P14> getter14,
-        string name15, ICodec<P15> codec15, Func<Result, P15> getter15,
-        string name16, ICodec<P16> codec16, Func<Result, P16> getter16,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
+        string name12, Codec<P12> codec12, Func<Result, P12> getter12,
+        string name13, Codec<P13> codec13, Func<Result, P13> getter13,
+        string name14, Codec<P14> codec14, Func<Result, P14> getter14,
+        string name15, Codec<P15> codec15, Func<Result, P15> getter15,
+        string name16, Codec<P16> codec16, Func<Result, P16> getter16,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, Result> func
     )
     {
@@ -246,7 +247,7 @@ public static class StructCodec
     }
 }
 
-public abstract class StructCodec<R> : ICodec<R>
+public abstract class StructCodec<R> : Codec<R>
 {
     public const string INLINE = "_inline_";
 
@@ -254,17 +255,17 @@ public abstract class StructCodec<R> : ICodec<R>
 
     public abstract R DecodeFromMap<T>(ITranscoder<T> transcoder, IVirtualMap<T> map);
 
-    public D Encode<D>(ITranscoder<D> transcoder, R value)
+    public override D Encode<D>(ITranscoder<D> transcoder, R value)
     {
         return EncodeToMap(transcoder, value, transcoder.EncodeMap());
     }
 
-    public R Decode<D>(ITranscoder<D> transcoder, D value)
+    public override R Decode<D>(ITranscoder<D> transcoder, D value)
     {
         return DecodeFromMap(transcoder, transcoder.DecodeMap(value));
     }
 
-    private static D put<D, T>(ITranscoder<D> transcoder, ICodec<T> codec, IVirtualMapBuilder<D> mapBuilder, string key, T value)
+    private static D put<D, T>(ITranscoder<D> transcoder, Codec<T> codec, IVirtualMapBuilder<D> mapBuilder, string key, T value)
     {
         if (key == INLINE)
         {
@@ -284,7 +285,7 @@ public abstract class StructCodec<R> : ICodec<R>
         return result;
     }
 
-    public static T Get<D, T>(ITranscoder<D> transcoder, ICodec<T> codec, string key, IVirtualMap<D> map)
+    public static T Get<D, T>(ITranscoder<D> transcoder, Codec<T> codec, string key, IVirtualMap<D> map)
     {
         if (key == INLINE)
         {
@@ -311,7 +312,7 @@ public abstract class StructCodec<R> : ICodec<R>
                 switch (codec)
                 {
                     case Codecs.DefaultCodec<T> defaultCodec:
-                        return defaultCodec.Default;
+                        return defaultCodec.DefaultValue;
                     default:
                     {
                         var type = codec.GetType();
@@ -331,7 +332,7 @@ public abstract class StructCodec<R> : ICodec<R>
 
         return (codec switch
         {
-            Codecs.DefaultCodec<T> defaultValue when !map.HasValue(key) => defaultValue.Default,
+            Codecs.DefaultCodec<T> defaultValue when !map.HasValue(key) => defaultValue.DefaultValue,
             _ when !map.HasValue(key) && codec.GetType().IsGenericType && codec.GetType().GetGenericTypeDefinition() == typeof(Codecs.OptionalCodec<>)
                 => (T)Activator.CreateInstance(typeof(Optional<>).MakeGenericType(codec.GetType().GetGenericArguments()[0]))!,
             _ => codec.Decode(transcoder, map.GetValue(key))
@@ -353,7 +354,7 @@ public abstract class StructCodec<R> : ICodec<R>
 
     public class StructCodec1P<P1, Result>(
         string name1,
-        ICodec<P1> codec1,
+        Codec<P1> codec1,
         Func<Result, P1> getter1,
         Func<P1, Result> func)
         : StructCodec<Result>
@@ -372,8 +373,8 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec2P<P1, P2, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
         Func<P1, P2, Result> func)
         : StructCodec<Result>
     {
@@ -393,9 +394,9 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec3P<P1, P2, P3, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
         Func<P1, P2, P3, Result> func)
         : StructCodec<Result>
     {
@@ -417,10 +418,10 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec4P<P1, P2, P3, P4, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
         Func<P1, P2, P3, P4, Result> func)
         : StructCodec<Result>
     {
@@ -444,11 +445,11 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec5P<P1, P2, P3, P4, P5, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
         Func<P1, P2, P3, P4, P5, Result> func)
         : StructCodec<Result>
     {
@@ -474,12 +475,12 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec6P<P1, P2, P3, P4, P5, P6, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
         Func<P1, P2, P3, P4, P5, P6, Result> func)
         : StructCodec<Result>
     {
@@ -507,13 +508,13 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec7P<P1, P2, P3, P4, P5, P6, P7, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
         Func<P1, P2, P3, P4, P5, P6, P7, Result> func)
         : StructCodec<Result>
     {
@@ -543,14 +544,14 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec8P<P1, P2, P3, P4, P5, P6, P7, P8, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, Result> func)
         : StructCodec<Result>
     {
@@ -582,15 +583,15 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec9P<P1, P2, P3, P4, P5, P6, P7, P8, P9, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, Result> func)
         : StructCodec<Result>
     {
@@ -624,16 +625,16 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec10P<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, Result> func)
         : StructCodec<Result>
     {
@@ -669,17 +670,17 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec11P<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, Result> func)
         : StructCodec<Result>
     {
@@ -717,18 +718,18 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec12P<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
-        string name12, ICodec<P12> codec12, Func<Result, P12> getter12,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
+        string name12, Codec<P12> codec12, Func<Result, P12> getter12,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, Result> func)
         : StructCodec<Result>
     {
@@ -768,19 +769,19 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec13P<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
-        string name12, ICodec<P12> codec12, Func<Result, P12> getter12,
-        string name13, ICodec<P13> codec13, Func<Result, P13> getter13,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
+        string name12, Codec<P12> codec12, Func<Result, P12> getter12,
+        string name13, Codec<P13> codec13, Func<Result, P13> getter13,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, Result> func)
         : StructCodec<Result>
     {
@@ -822,20 +823,20 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec14P<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
-        string name12, ICodec<P12> codec12, Func<Result, P12> getter12,
-        string name13, ICodec<P13> codec13, Func<Result, P13> getter13,
-        string name14, ICodec<P14> codec14, Func<Result, P14> getter14,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
+        string name12, Codec<P12> codec12, Func<Result, P12> getter12,
+        string name13, Codec<P13> codec13, Func<Result, P13> getter13,
+        string name14, Codec<P14> codec14, Func<Result, P14> getter14,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, Result> func)
         : StructCodec<Result>
     {
@@ -879,21 +880,21 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec15P<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
-        string name12, ICodec<P12> codec12, Func<Result, P12> getter12,
-        string name13, ICodec<P13> codec13, Func<Result, P13> getter13,
-        string name14, ICodec<P14> codec14, Func<Result, P14> getter14,
-        string name15, ICodec<P15> codec15, Func<Result, P15> getter15,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
+        string name12, Codec<P12> codec12, Func<Result, P12> getter12,
+        string name13, Codec<P13> codec13, Func<Result, P13> getter13,
+        string name14, Codec<P14> codec14, Func<Result, P14> getter14,
+        string name15, Codec<P15> codec15, Func<Result, P15> getter15,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, Result> func)
         : StructCodec<Result>
     {
@@ -939,22 +940,22 @@ public abstract class StructCodec<R> : ICodec<R>
     }
 
     public class StructCodec16P<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, Result>(
-        string name1, ICodec<P1> codec1, Func<Result, P1> getter1,
-        string name2, ICodec<P2> codec2, Func<Result, P2> getter2,
-        string name3, ICodec<P3> codec3, Func<Result, P3> getter3,
-        string name4, ICodec<P4> codec4, Func<Result, P4> getter4,
-        string name5, ICodec<P5> codec5, Func<Result, P5> getter5,
-        string name6, ICodec<P6> codec6, Func<Result, P6> getter6,
-        string name7, ICodec<P7> codec7, Func<Result, P7> getter7,
-        string name8, ICodec<P8> codec8, Func<Result, P8> getter8,
-        string name9, ICodec<P9> codec9, Func<Result, P9> getter9,
-        string name10, ICodec<P10> codec10, Func<Result, P10> getter10,
-        string name11, ICodec<P11> codec11, Func<Result, P11> getter11,
-        string name12, ICodec<P12> codec12, Func<Result, P12> getter12,
-        string name13, ICodec<P13> codec13, Func<Result, P13> getter13,
-        string name14, ICodec<P14> codec14, Func<Result, P14> getter14,
-        string name15, ICodec<P15> codec15, Func<Result, P15> getter15,
-        string name16, ICodec<P16> codec16, Func<Result, P16> getter16,
+        string name1, Codec<P1> codec1, Func<Result, P1> getter1,
+        string name2, Codec<P2> codec2, Func<Result, P2> getter2,
+        string name3, Codec<P3> codec3, Func<Result, P3> getter3,
+        string name4, Codec<P4> codec4, Func<Result, P4> getter4,
+        string name5, Codec<P5> codec5, Func<Result, P5> getter5,
+        string name6, Codec<P6> codec6, Func<Result, P6> getter6,
+        string name7, Codec<P7> codec7, Func<Result, P7> getter7,
+        string name8, Codec<P8> codec8, Func<Result, P8> getter8,
+        string name9, Codec<P9> codec9, Func<Result, P9> getter9,
+        string name10, Codec<P10> codec10, Func<Result, P10> getter10,
+        string name11, Codec<P11> codec11, Func<Result, P11> getter11,
+        string name12, Codec<P12> codec12, Func<Result, P12> getter12,
+        string name13, Codec<P13> codec13, Func<Result, P13> getter13,
+        string name14, Codec<P14> codec14, Func<Result, P14> getter14,
+        string name15, Codec<P15> codec15, Func<Result, P15> getter15,
+        string name16, Codec<P16> codec16, Func<Result, P16> getter16,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, Result> func)
         : StructCodec<Result>
     {

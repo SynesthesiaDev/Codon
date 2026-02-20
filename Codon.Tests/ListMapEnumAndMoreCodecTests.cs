@@ -11,7 +11,7 @@ public class ListMapEnumAndMoreCodecTests
     [Test]
     public void List_Primitive_RoundTrip()
     {
-        var codec = Codecs.Int.List();
+        var codec = Codecs.INT.List();
         var list = new List<int> { 1, 2, 3, 4 };
         var encoded = codec.Encode(_t, list);
         var decoded = codec.Decode(_t, encoded);
@@ -21,7 +21,7 @@ public class ListMapEnumAndMoreCodecTests
     [Test]
     public void List_Empty_RoundTrip()
     {
-        var codec = Codecs.String.List();
+        var codec = Codecs.STRING.List();
         var list = new List<string>();
         var encoded = codec.Encode(_t, list);
         var decoded = codec.Decode(_t, encoded);
@@ -31,7 +31,7 @@ public class ListMapEnumAndMoreCodecTests
     [Test]
     public void Map_Primitive_RoundTrip()
     {
-        var codec = Codecs.String.MapTo(Codecs.Int);
+        var codec = Codecs.STRING.MapTo(Codecs.INT);
         var map = new Dictionary<string, int> { { "a", 1 }, { "b", 2 } };
         var encoded = codec.Encode(_t, map);
         var decoded = codec.Decode(_t, encoded);
@@ -41,7 +41,7 @@ public class ListMapEnumAndMoreCodecTests
     [Test]
     public void Map_Empty_RoundTrip()
     {
-        var codec = Codecs.String.MapTo(Codecs.String);
+        var codec = Codecs.STRING.MapTo(Codecs.STRING);
         var map = new Dictionary<string, string>();
         var encoded = codec.Encode(_t, map);
         var decoded = codec.Decode(_t, encoded);
@@ -63,7 +63,7 @@ public class ListMapEnumAndMoreCodecTests
     public void TransformativeCodec_RoundTrip()
     {
         // Store an int via string inner codec using transform int<->string
-        var intAsStringCodec = Codecs.String.Transform<int>(
+        var intAsStringCodec = Codecs.STRING.Transform<int>(
             to: s => int.Parse(s),
             from: i => i.ToString()
         );
@@ -77,8 +77,8 @@ public class ListMapEnumAndMoreCodecTests
     private record Rect(int w, int h) : Shape;
 
     private static readonly StructCodec<Rect> RectCodec = StructCodec.Of(
-        "w", Codecs.Int, r => r.w,
-        "h", Codecs.Int, r => r.h,
+        "w", Codecs.INT, r => r.w,
+        "h", Codecs.INT, r => r.h,
         (w, h) => new Rect(w, h)
     );
 
@@ -138,7 +138,7 @@ public class ListMapEnumAndMoreCodecTests
     [Test]
     public void ForwardRefCodec_Delegates()
     {
-        var inner = Codecs.Int;
+        var inner = Codecs.INT;
         var forward = inner.ForwardRef();
         var val = 77;
         var enc = forward.Encode(_t, val);
@@ -149,9 +149,9 @@ public class ListMapEnumAndMoreCodecTests
     private record Nested(string name, List<int> nums, Dictionary<string, int> map);
 
     private static readonly StructCodec<Nested> NestedCodec = StructCodec.Of(
-        "name", Codecs.String, n => n.name,
-        "nums", Codecs.Int.List(), n => n.nums,
-        "map", Codecs.String.MapTo(Codecs.Int), n => n.map,
+        "name", Codecs.STRING, n => n.name,
+        "nums", Codecs.INT.List(), n => n.nums,
+        "map", Codecs.STRING.MapTo(Codecs.INT), n => n.map,
         (name, nums, map) => new Nested(name, nums, map)
     );
 
