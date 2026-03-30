@@ -143,7 +143,7 @@ public static class BinaryCodecs
         public byte[] Read(IByteBuffer buffer)
         {
             var size = BinaryCodec.VAR_INT.Read(buffer);
-            return buffer.ReadBytes(size).Array;
+            return buffer.ReadBytes(size).ToByteArraySafe(size);
         }
     }
 
@@ -176,7 +176,7 @@ public static class BinaryCodecs
         {
             var size = BinaryCodec.VAR_INT.Read(buffer);
             if (size < 0) throw new InvalidDataException("String cannot have negative length");
-            var stringBytes = buffer.ReadBytes(size).Array;
+            var stringBytes = buffer.ReadBytes(size).ToByteArraySafe();
             return Encoding.UTF8.GetString(stringBytes);
         }
     }
@@ -190,7 +190,7 @@ public static class BinaryCodecs
 
         public byte[] Read(IByteBuffer buffer)
         {
-            return buffer.ReadBytes(buffer.Array.Length).Array;
+            return buffer.ReadBytes(buffer.Array.Length).ToByteArraySafe();
         }
     }
 
