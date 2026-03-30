@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Codon.Buffer;
-using Codon.Buffer.Extensions;
 using Codon.Optionals;
+using DotNetty.Buffers;
 
-#pragma warning disable CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
 
 namespace Codon.Binary;
 
@@ -14,12 +12,12 @@ public static class BinaryCodecs
 {
     public class BooleanBinaryCodec : IBinaryCodec<bool>
     {
-        public void Write(BinaryBuffer buffer, bool value)
+        public void Write(IByteBuffer buffer, bool value)
         {
             buffer.WriteBoolean(value);
         }
 
-        public bool Read(BinaryBuffer buffer)
+        public bool Read(IByteBuffer buffer)
         {
             return buffer.ReadBoolean();
         }
@@ -27,12 +25,12 @@ public static class BinaryCodecs
 
     public class ByteBinaryCodec : IBinaryCodec<byte>
     {
-        public void Write(BinaryBuffer buffer, byte value)
+        public void Write(IByteBuffer buffer, byte value)
         {
             buffer.WriteByte(value);
         }
 
-        public byte Read(BinaryBuffer buffer)
+        public byte Read(IByteBuffer buffer)
         {
             return buffer.ReadByte();
         }
@@ -40,12 +38,12 @@ public static class BinaryCodecs
 
     public class IntBinaryCodec : IBinaryCodec<int>
     {
-        public void Write(BinaryBuffer buffer, int value)
+        public void Write(IByteBuffer buffer, int value)
         {
             buffer.WriteInt(value);
         }
 
-        public int Read(BinaryBuffer buffer)
+        public int Read(IByteBuffer buffer)
         {
             return buffer.ReadInt();
         }
@@ -53,12 +51,12 @@ public static class BinaryCodecs
 
     public class LongBinaryCodec : IBinaryCodec<long>
     {
-        public void Write(BinaryBuffer buffer, long value)
+        public void Write(IByteBuffer buffer, long value)
         {
             buffer.WriteLong(value);
         }
 
-        public long Read(BinaryBuffer buffer)
+        public long Read(IByteBuffer buffer)
         {
             return buffer.ReadLong();
         }
@@ -66,12 +64,12 @@ public static class BinaryCodecs
 
     public class FloatBinaryCodec : IBinaryCodec<float>
     {
-        public void Write(BinaryBuffer buffer, float value)
+        public void Write(IByteBuffer buffer, float value)
         {
             buffer.WriteFloat(value);
         }
 
-        public float Read(BinaryBuffer buffer)
+        public float Read(IByteBuffer buffer)
         {
             return buffer.ReadFloat();
         }
@@ -79,12 +77,12 @@ public static class BinaryCodecs
 
     public class DoubleBinaryCodec : IBinaryCodec<double>
     {
-        public void Write(BinaryBuffer buffer, double value)
+        public void Write(IByteBuffer buffer, double value)
         {
             buffer.WriteDouble(value);
         }
 
-        public double Read(BinaryBuffer buffer)
+        public double Read(IByteBuffer buffer)
         {
             return buffer.ReadDouble();
         }
@@ -92,27 +90,27 @@ public static class BinaryCodecs
 
     public class VarIntBinaryCodec : IBinaryCodec<int>
     {
-        private const int SEGMENT_BITS = 0x7F;
-        private const int CONTINUE_BIT = 0x80;
+        private const int segment_bits = 0x7F;
+        private const int continue_bit = 0x80;
 
-        public void Write(BinaryBuffer buffer, int value)
+        public void Write(IByteBuffer buffer, int value)
         {
             var uValue = (uint)value;
             while (true)
             {
-                if ((uValue & ~SEGMENT_BITS) == 0)
+                if ((uValue & ~segment_bits) == 0)
                 {
                     buffer.WriteByte((byte)uValue);
                     break;
                 }
 
-                buffer.WriteByte((byte)((uValue & SEGMENT_BITS) | CONTINUE_BIT));
+                buffer.WriteByte((byte)((uValue & segment_bits) | continue_bit));
 
                 uValue >>= 7;
             }
         }
 
-        public int Read(BinaryBuffer buffer)
+        public int Read(IByteBuffer buffer)
         {
             var value = 0;
             var position = 0;
@@ -120,12 +118,12 @@ public static class BinaryCodecs
             while (position < 35) // Max 5 bytes
             {
                 var currentByte = buffer.ReadByte();
-                var segment = currentByte & SEGMENT_BITS;
+                var segment = currentByte & segment_bits;
 
                 value |= segment << position;
 
                 // finished reading
-                if ((currentByte & CONTINUE_BIT) == 0) return value;
+                if ((currentByte & continue_bit) == 0) return value;
 
                 position += 7;
             }
@@ -136,101 +134,101 @@ public static class BinaryCodecs
 
     public class ByteArrayBinaryCodec : IBinaryCodec<byte[]>
     {
-        public void Write(BinaryBuffer buffer, byte[] value)
+        public void Write(IByteBuffer buffer, byte[] value)
         {
-            BinaryCodec.VarInt.Write(buffer, value.Length);
+            BinaryCodec.VAR_INT.Write(buffer, value.Length);
             buffer.WriteBytes(value);
         }
 
-        public byte[] Read(BinaryBuffer buffer)
+        public byte[] Read(IByteBuffer buffer)
         {
-            var size = BinaryCodec.VarInt.Read(buffer);
-            return buffer.ReadBytes(size).ToArray();
+            var size = BinaryCodec.VAR_INT.Read(buffer);
+            return buffer.ReadBytes(size).Array;
         }
     }
 
-    public class BinaryBufferBinaryCodec : IBinaryCodec<BinaryBuffer>
+    public class ByteBufferBinaryCodec : IBinaryCodec<IByteBuffer>
     {
-        public void Write(BinaryBuffer buffer, BinaryBuffer value)
+        public void Write(IByteBuffer buffer, IByteBuffer value)
         {
-            var array = value.ToArray();
-            BinaryCodec.VarInt.Write(buffer, array.Length);
+            var array = value.Array;
+            BinaryCodec.VAR_INT.Write(buffer, array.Length);
             buffer.WriteBytes(array);
         }
 
-        public BinaryBuffer Read(BinaryBuffer buffer)
+        public IByteBuffer Read(IByteBuffer buffer)
         {
-            var size = BinaryCodec.VarInt.Read(buffer);
-            return buffer.ReadBytes(size).ToArray().ToBinaryBuffer();
+            var size = BinaryCodec.VAR_INT.Read(buffer);
+            return buffer.ReadBytes(size);
         }
     }
 
     public class StringBinaryCodec : IBinaryCodec<string>
     {
-        public void Write(BinaryBuffer buffer, string value)
+        public void Write(IByteBuffer buffer, string value)
         {
             var stringBytes = Encoding.UTF8.GetBytes(value);
-            BinaryCodec.VarInt.Write(buffer, stringBytes.Length);
+            BinaryCodec.VAR_INT.Write(buffer, stringBytes.Length);
             buffer.WriteBytes(stringBytes);
         }
 
-        public string Read(BinaryBuffer buffer)
+        public string Read(IByteBuffer buffer)
         {
-            var size = BinaryCodec.VarInt.Read(buffer);
+            var size = BinaryCodec.VAR_INT.Read(buffer);
             if (size < 0) throw new InvalidDataException("String cannot have negative length");
-            var stringBytes = buffer.ReadBytes(size);
+            var stringBytes = buffer.ReadBytes(size).Array;
             return Encoding.UTF8.GetString(stringBytes);
         }
     }
 
     public class RawBytesBinaryCodec : IBinaryCodec<byte[]>
     {
-        public void Write(BinaryBuffer buffer, byte[] value)
+        public void Write(IByteBuffer buffer, byte[] value)
         {
             buffer.WriteBytes(value);
         }
 
-        public byte[] Read(BinaryBuffer buffer)
+        public byte[] Read(IByteBuffer buffer)
         {
-            return buffer.ReadBytes(buffer.Length).ToArray();
+            return buffer.ReadBytes(buffer.Array.Length).Array;
         }
     }
 
     public class OptionalBinaryCodec<T>(IBinaryCodec<T> innerCodec) : IBinaryCodec<Optional<T>>
     {
-        public void Write(BinaryBuffer buffer, Optional<T> value)
+        public void Write(IByteBuffer buffer, Optional<T> value)
         {
-            BinaryCodec.Boolean.Write(buffer, value.IsPresent);
+            BinaryCodec.BOOLEAN.Write(buffer, value.IsPresent);
             if (value.IsPresent) innerCodec.Write(buffer, value.Value!);
         }
 
-        public Optional<T> Read(BinaryBuffer buffer)
+        public Optional<T> Read(IByteBuffer buffer)
         {
-            return BinaryCodec.Boolean.Read(buffer) ? Optional.Of(innerCodec.Read(buffer)) : Optional.Empty<T>();
+            return BinaryCodec.BOOLEAN.Read(buffer) ? Optional.Of(innerCodec.Read(buffer)) : Optional.Empty<T>();
         }
     }
 
     public class DefaultBinaryCodec<T>(IBinaryCodec<T> innerCodec, T defaultValue) : IBinaryCodec<T> where T : notnull
     {
-        public void Write(BinaryBuffer buffer, T? value)
+        public void Write(IByteBuffer buffer, T? value)
         {
             innerCodec.Write(buffer, value ?? defaultValue);
         }
 
-        public T Read(BinaryBuffer buffer)
+        public T Read(IByteBuffer buffer)
         {
-            return BinaryCodec.Boolean.Read(buffer) ? innerCodec.Read(buffer) : defaultValue;
+            return BinaryCodec.BOOLEAN.Read(buffer) ? innerCodec.Read(buffer) : defaultValue;
         }
     }
 
     public class TransformativeBinaryCodec<T, S>(IBinaryCodec<T> innerCodec, Func<S, T> from, Func<T, S> to) : IBinaryCodec<S> where S : notnull where T : notnull
     {
-        public void Write(BinaryBuffer buffer, S value)
+        public void Write(IByteBuffer buffer, S value)
         {
             innerCodec.Write(buffer, from.Invoke(value));
         }
 
-        public S Read(BinaryBuffer buffer)
+        public S Read(IByteBuffer buffer)
         {
             var innerValue = innerCodec.Read(buffer);
             return to.Invoke(innerValue);
@@ -239,9 +237,9 @@ public static class BinaryCodecs
 
     public class DictionaryBinaryCodec<K, V>(IBinaryCodec<K> keyCodec, IBinaryCodec<V> valueCodec) : IBinaryCodec<Dictionary<K, V>> where K : notnull where V : notnull
     {
-        public void Write(BinaryBuffer buffer, Dictionary<K, V> value)
+        public void Write(IByteBuffer buffer, Dictionary<K, V> value)
         {
-            BinaryCodec.VarInt.Write(buffer, value.Count);
+            BinaryCodec.VAR_INT.Write(buffer, value.Count);
             foreach (var keyValuePair in value)
             {
                 keyCodec.Write(buffer, keyValuePair.Key);
@@ -249,10 +247,10 @@ public static class BinaryCodecs
             }
         }
 
-        public Dictionary<K, V> Read(BinaryBuffer buffer)
+        public Dictionary<K, V> Read(IByteBuffer buffer)
         {
             var dict = new Dictionary<K, V>();
-            var size = BinaryCodec.VarInt.Read(buffer); // how big is my dict...
+            var size = BinaryCodec.VAR_INT.Read(buffer); // how big is my dict...
 
             for (var i = 0; i < size; i++)
             {
@@ -267,16 +265,16 @@ public static class BinaryCodecs
 
     public class ListBinaryCodec<T>(IBinaryCodec<T> innerCodec) : IBinaryCodec<List<T>>
     {
-        public void Write(BinaryBuffer buffer, List<T> value)
+        public void Write(IByteBuffer buffer, List<T> value)
         {
-            BinaryCodec.VarInt.Write(buffer, value.Count);
+            BinaryCodec.VAR_INT.Write(buffer, value.Count);
             value.ForEach(item => innerCodec.Write(buffer, item));
         }
 
-        public List<T> Read(BinaryBuffer buffer)
+        public List<T> Read(IByteBuffer buffer)
         {
             var list = new List<T>();
-            var size = BinaryCodec.VarInt.Read(buffer);
+            var size = BinaryCodec.VAR_INT.Read(buffer);
 
             for (var i = 0; i < size; i++) list.Add(innerCodec.Read(buffer));
 
@@ -286,7 +284,7 @@ public static class BinaryCodecs
 
     public class UnionBinaryCodec<T, K>(IBinaryCodec<K> keyCodec, Func<T, K> keyFunc, Func<K, IBinaryCodec<T>> serializerFactory) : IBinaryCodec<T>
     {
-        public void Write(BinaryBuffer buffer, T value)
+        public void Write(IByteBuffer buffer, T value)
         {
             var key = keyFunc.Invoke(value);
             keyCodec.Write(buffer, key);
@@ -295,7 +293,7 @@ public static class BinaryCodecs
             serializer.Write(buffer, value);
         }
 
-        public T Read(BinaryBuffer buffer)
+        public T Read(IByteBuffer buffer)
         {
             var key = keyCodec.Read(buffer);
             var serializer = serializerFactory.Invoke(key);
@@ -305,75 +303,76 @@ public static class BinaryCodecs
 
     public class RecursiveBinaryCodec<T> : IBinaryCodec<T> where T : notnull
     {
-        private readonly Lazy<IBinaryCodec<T>> _delegate;
+        private readonly Lazy<IBinaryCodec<T>> @delegate;
 
         public RecursiveBinaryCodec(Func<IBinaryCodec<T>, IBinaryCodec<T>> self)
         {
-            _delegate = new Lazy<IBinaryCodec<T>>(() => self.Invoke(this));
+            @delegate = new Lazy<IBinaryCodec<T>>(() => self.Invoke(this));
         }
 
-        public void Write(BinaryBuffer buffer, T value)
+        public void Write(IByteBuffer buffer, T value)
         {
-            _delegate.Value.Write(buffer, value);
+            @delegate.Value.Write(buffer, value);
         }
 
-        public T Read(BinaryBuffer buffer)
+        public T Read(IByteBuffer buffer)
         {
-            return _delegate.Value.Read(buffer);
+            return @delegate.Value.Read(buffer);
         }
     }
 
     public class EnumBinaryCodec<E> : IBinaryCodec<E> where E : Enum
     {
-        private Array _entries = System.Enum.GetValues(typeof(E));
+        private readonly Array entries = Enum.GetValues(typeof(E));
 
-        public void Write(BinaryBuffer buffer, E value)
+        public void Write(IByteBuffer buffer, E value)
         {
-            var ordinal = Array.IndexOf(_entries, value);
-            BinaryCodec.VarInt.Write(buffer, ordinal);
+            var ordinal = Array.IndexOf(entries, value);
+            BinaryCodec.VAR_INT.Write(buffer, ordinal);
         }
 
-        public E Read(BinaryBuffer buffer)
+        public E Read(IByteBuffer buffer)
         {
-            var ordinal = BinaryCodec.VarInt.Read(buffer);
-            if (ordinal < 0 || ordinal >= _entries.Length) throw new IndexOutOfRangeException($"Ordinal {ordinal} is outside the range [0, {_entries.Length - 1}] for enum {typeof(E).Name}");
+            var ordinal = BinaryCodec.VAR_INT.Read(buffer);
+            if (ordinal < 0 || ordinal >= entries.Length) throw new IndexOutOfRangeException($"Ordinal {ordinal} is outside the range [0, {entries.Length - 1}] for enum {typeof(E).Name}");
 
-            return (E)_entries.GetValue(ordinal)!;
+            return (E)entries.GetValue(ordinal)!;
         }
     }
 
-    public class BinaryCodecP1<P1, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
+    public class BinaryCodecP1<P1, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
         Func<P1, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             return func.Invoke(result1);
         }
     }
 
-    public class BinaryCodecP2<P1, P2, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
+    public class BinaryCodecP2<P1, P2, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
         Func<P1, P2, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -381,22 +380,24 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP3<P1, P2, P3, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
+    public class BinaryCodecP3<P1, P2, P3, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
         Func<P1, P2, P3, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
             codec3.Write(buffer, getter3.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -405,16 +406,19 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP4<P1, P2, P3, P4, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
+    public class BinaryCodecP4<P1, P2, P3, P4, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
         Func<P1, P2, P3, P4, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -422,7 +426,7 @@ public static class BinaryCodecs
             codec4.Write(buffer, getter4.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -432,17 +436,21 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP5<P1, P2, P3, P4, P5, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
+    public class BinaryCodecP5<P1, P2, P3, P4, P5, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
         Func<P1, P2, P3, P4, P5, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -451,7 +459,7 @@ public static class BinaryCodecs
             codec5.Write(buffer, getter5.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -462,18 +470,23 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP6<P1, P2, P3, P4, P5, P6, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
-        IBinaryCodec<P6> codec6, Func<Result, P6> getter6,
+    public class BinaryCodecP6<P1, P2, P3, P4, P5, P6, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
         Func<P1, P2, P3, P4, P5, P6, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -483,7 +496,7 @@ public static class BinaryCodecs
             codec6.Write(buffer, getter6.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -495,19 +508,25 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP7<P1, P2, P3, P4, P5, P6, P7, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
-        IBinaryCodec<P6> codec6, Func<Result, P6> getter6,
-        IBinaryCodec<P7> codec7, Func<Result, P7> getter7,
+    public class BinaryCodecP7<P1, P2, P3, P4, P5, P6, P7, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
         Func<P1, P2, P3, P4, P5, P6, P7, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -518,7 +537,7 @@ public static class BinaryCodecs
             codec7.Write(buffer, getter7.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -531,20 +550,27 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP8<P1, P2, P3, P4, P5, P6, P7, P8, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
-        IBinaryCodec<P6> codec6, Func<Result, P6> getter6,
-        IBinaryCodec<P7> codec7, Func<Result, P7> getter7,
-        IBinaryCodec<P8> codec8, Func<Result, P8> getter8,
+    public class BinaryCodecP8<P1, P2, P3, P4, P5, P6, P7, P8, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -556,7 +582,7 @@ public static class BinaryCodecs
             codec8.Write(buffer, getter8.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -570,21 +596,29 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP9<P1, P2, P3, P4, P5, P6, P7, P8, P9, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
-        IBinaryCodec<P6> codec6, Func<Result, P6> getter6,
-        IBinaryCodec<P7> codec7, Func<Result, P7> getter7,
-        IBinaryCodec<P8> codec8, Func<Result, P8> getter8,
-        IBinaryCodec<P9> codec9, Func<Result, P9> getter9,
+    public class BinaryCodecP9<P1, P2, P3, P4, P5, P6, P7, P8, P9, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -597,7 +631,7 @@ public static class BinaryCodecs
             codec9.Write(buffer, getter9.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -612,22 +646,31 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP10<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
-        IBinaryCodec<P6> codec6, Func<Result, P6> getter6,
-        IBinaryCodec<P7> codec7, Func<Result, P7> getter7,
-        IBinaryCodec<P8> codec8, Func<Result, P8> getter8,
-        IBinaryCodec<P9> codec9, Func<Result, P9> getter9,
-        IBinaryCodec<P10> codec10, Func<Result, P10> getter10,
+    public class BinaryCodecP10<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -641,7 +684,7 @@ public static class BinaryCodecs
             codec10.Write(buffer, getter10.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -657,23 +700,33 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP11<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
-        IBinaryCodec<P6> codec6, Func<Result, P6> getter6,
-        IBinaryCodec<P7> codec7, Func<Result, P7> getter7,
-        IBinaryCodec<P8> codec8, Func<Result, P8> getter8,
-        IBinaryCodec<P9> codec9, Func<Result, P9> getter9,
-        IBinaryCodec<P10> codec10, Func<Result, P10> getter10,
-        IBinaryCodec<P11> codec11, Func<Result, P11> getter11,
+    public class BinaryCodecP11<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -688,7 +741,7 @@ public static class BinaryCodecs
             codec11.Write(buffer, getter11.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -705,24 +758,35 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP12<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
-        IBinaryCodec<P6> codec6, Func<Result, P6> getter6,
-        IBinaryCodec<P7> codec7, Func<Result, P7> getter7,
-        IBinaryCodec<P8> codec8, Func<Result, P8> getter8,
-        IBinaryCodec<P9> codec9, Func<Result, P9> getter9,
-        IBinaryCodec<P10> codec10, Func<Result, P10> getter10,
-        IBinaryCodec<P11> codec11, Func<Result, P11> getter11,
-        IBinaryCodec<P12> codec12, Func<Result, P12> getter12,
+    public class BinaryCodecP12<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
+        IBinaryCodec<P12> codec12,
+        Func<Result, P12> getter12,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -738,7 +802,7 @@ public static class BinaryCodecs
             codec12.Write(buffer, getter12.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -756,25 +820,37 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP13<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
-        IBinaryCodec<P6> codec6, Func<Result, P6> getter6,
-        IBinaryCodec<P7> codec7, Func<Result, P7> getter7,
-        IBinaryCodec<P8> codec8, Func<Result, P8> getter8,
-        IBinaryCodec<P9> codec9, Func<Result, P9> getter9,
-        IBinaryCodec<P10> codec10, Func<Result, P10> getter10,
-        IBinaryCodec<P11> codec11, Func<Result, P11> getter11,
-        IBinaryCodec<P12> codec12, Func<Result, P12> getter12,
-        IBinaryCodec<P13> codec13, Func<Result, P13> getter13,
+    public class BinaryCodecP13<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
+        IBinaryCodec<P12> codec12,
+        Func<Result, P12> getter12,
+        IBinaryCodec<P13> codec13,
+        Func<Result, P13> getter13,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -791,7 +867,7 @@ public static class BinaryCodecs
             codec13.Write(buffer, getter13.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -810,26 +886,39 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP14<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
-        IBinaryCodec<P6> codec6, Func<Result, P6> getter6,
-        IBinaryCodec<P7> codec7, Func<Result, P7> getter7,
-        IBinaryCodec<P8> codec8, Func<Result, P8> getter8,
-        IBinaryCodec<P9> codec9, Func<Result, P9> getter9,
-        IBinaryCodec<P10> codec10, Func<Result, P10> getter10,
-        IBinaryCodec<P11> codec11, Func<Result, P11> getter11,
-        IBinaryCodec<P12> codec12, Func<Result, P12> getter12,
-        IBinaryCodec<P13> codec13, Func<Result, P13> getter13,
-        IBinaryCodec<P14> codec14, Func<Result, P14> getter14,
+    public class BinaryCodecP14<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
+        IBinaryCodec<P12> codec12,
+        Func<Result, P12> getter12,
+        IBinaryCodec<P13> codec13,
+        Func<Result, P13> getter13,
+        IBinaryCodec<P14> codec14,
+        Func<Result, P14> getter14,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -847,7 +936,7 @@ public static class BinaryCodecs
             codec14.Write(buffer, getter14.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -867,27 +956,41 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP15<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
-        IBinaryCodec<P6> codec6, Func<Result, P6> getter6,
-        IBinaryCodec<P7> codec7, Func<Result, P7> getter7,
-        IBinaryCodec<P8> codec8, Func<Result, P8> getter8,
-        IBinaryCodec<P9> codec9, Func<Result, P9> getter9,
-        IBinaryCodec<P10> codec10, Func<Result, P10> getter10,
-        IBinaryCodec<P11> codec11, Func<Result, P11> getter11,
-        IBinaryCodec<P12> codec12, Func<Result, P12> getter12,
-        IBinaryCodec<P13> codec13, Func<Result, P13> getter13,
-        IBinaryCodec<P14> codec14, Func<Result, P14> getter14,
-        IBinaryCodec<P15> codec15, Func<Result, P15> getter15,
+    public class BinaryCodecP15<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
+        IBinaryCodec<P12> codec12,
+        Func<Result, P12> getter12,
+        IBinaryCodec<P13> codec13,
+        Func<Result, P13> getter13,
+        IBinaryCodec<P14> codec14,
+        Func<Result, P14> getter14,
+        IBinaryCodec<P15> codec15,
+        Func<Result, P15> getter15,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -906,7 +1009,7 @@ public static class BinaryCodecs
             codec15.Write(buffer, getter15.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);
@@ -927,28 +1030,43 @@ public static class BinaryCodecs
         }
     }
 
-    public class BinaryCodecP16<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, Result>
-    (
-        IBinaryCodec<P1> codec1, Func<Result, P1> getter1,
-        IBinaryCodec<P2> codec2, Func<Result, P2> getter2,
-        IBinaryCodec<P3> codec3, Func<Result, P3> getter3,
-        IBinaryCodec<P4> codec4, Func<Result, P4> getter4,
-        IBinaryCodec<P5> codec5, Func<Result, P5> getter5,
-        IBinaryCodec<P6> codec6, Func<Result, P6> getter6,
-        IBinaryCodec<P7> codec7, Func<Result, P7> getter7,
-        IBinaryCodec<P8> codec8, Func<Result, P8> getter8,
-        IBinaryCodec<P9> codec9, Func<Result, P9> getter9,
-        IBinaryCodec<P10> codec10, Func<Result, P10> getter10,
-        IBinaryCodec<P11> codec11, Func<Result, P11> getter11,
-        IBinaryCodec<P12> codec12, Func<Result, P12> getter12,
-        IBinaryCodec<P13> codec13, Func<Result, P13> getter13,
-        IBinaryCodec<P14> codec14, Func<Result, P14> getter14,
-        IBinaryCodec<P15> codec15, Func<Result, P15> getter15,
-        IBinaryCodec<P16> codec16, Func<Result, P16> getter16,
+    public class BinaryCodecP16<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
+        IBinaryCodec<P12> codec12,
+        Func<Result, P12> getter12,
+        IBinaryCodec<P13> codec13,
+        Func<Result, P13> getter13,
+        IBinaryCodec<P14> codec14,
+        Func<Result, P14> getter14,
+        IBinaryCodec<P15> codec15,
+        Func<Result, P15> getter15,
+        IBinaryCodec<P16> codec16,
+        Func<Result, P16> getter16,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, Result> func
     ) : IBinaryCodec<Result>
     {
-        public void Write(BinaryBuffer buffer, Result value)
+        public void Write(IByteBuffer buffer, Result value)
         {
             codec1.Write(buffer, getter1.Invoke(value));
             codec2.Write(buffer, getter2.Invoke(value));
@@ -968,7 +1086,7 @@ public static class BinaryCodecs
             codec16.Write(buffer, getter16.Invoke(value));
         }
 
-        public Result Read(BinaryBuffer buffer)
+        public Result Read(IByteBuffer buffer)
         {
             var result1 = codec1.Read(buffer);
             var result2 = codec2.Read(buffer);

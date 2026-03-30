@@ -7,24 +7,24 @@ namespace Codon.Tests;
 
 public class OptionalAndDefaultCodecTests
 {
-    private readonly JsonTranscoder _t = JsonTranscoder.INSTANCE;
+    private readonly JsonTranscoder t = JsonTranscoder.INSTANCE;
 
     [Test]
     public void Optional_Present_RoundTrip()
     {
         var codec = Codecs.INT.Optional();
         var value = Optional.Of(42);
-        var encoded = codec.Encode(_t, value);
-        var decoded = codec.Decode(_t, encoded);
+        var encoded = codec.Encode(t, value);
+        var decoded = codec.Decode(t, encoded);
         Assert.That(decoded.IsPresent, Is.True);
         Assert.That(decoded.Value, Is.EqualTo(42));
     }
 
-    private record OptHolder(int id, Optional<int> oi)
+    private record OptHolder(int Id, Optional<int> Oi)
     {
-        public static readonly StructCodec<OptHolder> Codec = StructCodec.Of(
-            "id", Codecs.INT, h => h.id,
-            "oi", Codecs.INT.Optional(), h => h.oi,
+        public static readonly StructCodec<OptHolder> CODEC = StructCodec.Of(
+            "id", Codecs.INT, h => h.Id,
+            "oi", Codecs.INT.Optional(), h => h.Oi,
             (id, oi) => new OptHolder(id, oi)
         );
     }
@@ -33,15 +33,15 @@ public class OptionalAndDefaultCodecTests
     public void Optional_Missing_Field_IsEmpty()
     {
         var json = JsonDocument.Parse("{\"id\": 1}" ).RootElement;
-        var decoded = OptHolder.Codec.Decode(_t, json);
-        Assert.That(decoded.oi.IsMissing, Is.True);
+        var decoded = OptHolder.CODEC.Decode(t, json);
+        Assert.That(decoded.Oi.IsMissing, Is.True);
     }
 
-    private record DefHolder(int id, int x)
+    private record DefHolder(int Id, int X)
     {
-        public static readonly StructCodec<DefHolder> Codec = StructCodec.Of(
-            "id", Codecs.INT, h => h.id,
-            "x", Codecs.INT.Default(5), h => h.x,
+        public static readonly StructCodec<DefHolder> CODEC = StructCodec.Of(
+            "id", Codecs.INT, h => h.Id,
+            "x", Codecs.INT.Default(5), h => h.X,
             (id, x) => new DefHolder(id, x)
         );
     }
@@ -50,15 +50,15 @@ public class OptionalAndDefaultCodecTests
     public void Default_Missing_Field_UsesDefault()
     {
         var json = JsonDocument.Parse("{\"id\": 7}").RootElement;
-        var decoded = DefHolder.Codec.Decode(_t, json);
-        Assert.That(decoded.x, Is.EqualTo(5));
+        var decoded = DefHolder.CODEC.Decode(t, json);
+        Assert.That(decoded.X, Is.EqualTo(5));
     }
 
     [Test]
     public void Default_Present_Field_OverridesDefault()
     {
         var json = JsonDocument.Parse("{\"id\": 9, \"x\":123}").RootElement;
-        var decoded = DefHolder.Codec.Decode(_t, json);
-        Assert.That(decoded.x, Is.EqualTo(123));
+        var decoded = DefHolder.CODEC.Decode(t, json);
+        Assert.That(decoded.X, Is.EqualTo(123));
     }
 }

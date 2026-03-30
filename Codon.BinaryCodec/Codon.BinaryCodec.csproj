@@ -17,11 +17,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Codon.Buffer\Codon.Buffer.csproj"/>
         <ProjectReference Include="..\Codon.Optionals\Codon.Optionals.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="DotNetty.Buffers" Version="0.7.6" />
       <PackageReference Include="SynesthesiaUtils" Version="1.2.0" />
     </ItemGroup>
 

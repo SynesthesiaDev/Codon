@@ -12,7 +12,7 @@ public class IniParserTests
 
     public record User(string Name, int Age, bool IsTester, List<string> Properties)
     {
-        public static readonly Codec<User> Codec = StructCodec.Of
+        public static readonly Codec<User> CODEC = StructCodec.Of
         (
             "name", Codecs.STRING, u => u.Name,
             "age", Codecs.INT, u => u.Age,
@@ -26,7 +26,7 @@ public class IniParserTests
     public void TestTranscoder()
     {
         var user = new User("Synesthesia", 20, false, ["is_trans", "is_pan"]);
-        var ini = User.Codec.Encode(IniTranscoder.IniTranscoder.INSTANCE, user);
+        var ini = User.CODEC.Encode(IniTranscoder.IniTranscoder.INSTANCE, user);
         Console.WriteLine(ini);
     }
 
@@ -72,11 +72,11 @@ public class IniParserTests
         Assert.That(section.Name, Is.EqualTo("section name Woaaah"));
         Assert.That(section.Values.Count, Is.EqualTo(5));
 
-        AssertEquals(section.Values["boolianing"], "True");
-        AssertEquals(section.Values["doubling"], "0.4");
-        AssertEquals(section.Values["floating"], "6.7f");
-        AssertEquals(section.Values["strining"], "ayoo");
-        AssertEquals(section.Values["strining2"], "ayoo");
+        assertEquals(section.Values["boolianing"], "True");
+        assertEquals(section.Values["doubling"], "0.4");
+        assertEquals(section.Values["floating"], "6.7f");
+        assertEquals(section.Values["strining"], "ayoo");
+        assertEquals(section.Values["strining2"], "ayoo");
     }
 
     [Test]
@@ -91,14 +91,14 @@ public class IniParserTests
         Assert.That(section.Name, Is.Null);
         Assert.That(section.Values.Count, Is.EqualTo(5));
 
-        AssertEquals(section.Values["boolianing"], "True");
-        AssertEquals(section.Values["doubling"], "0.4");
-        AssertEquals(section.Values["floating"], "6.7f");
-        AssertEquals(section.Values["strining"], "ayoo");
-        AssertEquals(section.Values["strining2"], "ayoo");
+        assertEquals(section.Values["boolianing"], "True");
+        assertEquals(section.Values["doubling"], "0.4");
+        assertEquals(section.Values["floating"], "6.7f");
+        assertEquals(section.Values["strining"], "ayoo");
+        assertEquals(section.Values["strining2"], "ayoo");
     }
 
-    private static void AssertEquals(IniValue iniValue, string? value)
+    private static void assertEquals(IniValue iniValue, string? value)
     {
         Assert.That(iniValue.Value, Is.EqualTo(value));
     }

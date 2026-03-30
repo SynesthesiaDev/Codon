@@ -9,13 +9,13 @@ public class CodecTests
 {
     private const string jeson = "{\"name\":\"Synesthesia Dev\",\"age\":20}";
 
-    public record Person(string name, int age, Optional<bool> isAwesome)
+    public record Person(string Name, int Age, Optional<bool> IsAwesome)
     {
-        public static readonly Codec<Person> Codec = StructCodec.Of
+        public static readonly Codec<Person> CODEC = StructCodec.Of
         (
-            "name", Codecs.STRING, p => p.name,
-            "age", Codecs.INT, p => p.age,
-            "is_awesome", Codecs.BOOLEAN.Optional(), p => p.isAwesome,
+            "name", Codecs.STRING, p => p.Name,
+            "age", Codecs.INT, p => p.Age,
+            "is_awesome", Codecs.BOOLEAN.Optional(), p => p.IsAwesome,
             (name, age, someBoolean) => new Person(name, age, someBoolean)
         );
     }
@@ -25,8 +25,8 @@ public class CodecTests
         public static readonly StructCodec<Car> CODEC = StructCodec.Of
         (
             "model", Codecs.STRING, c => c.Model,
-            "passengers", Person.Codec.List(), c => c.Passengers,
-            "driver", Person.Codec.Optional(), c => c.Driver,
+            "passengers", Person.CODEC.List(), c => c.Passengers,
+            "driver", Person.CODEC.Optional(), c => c.Driver,
             (model, passengers, driver) => new Car(model, passengers, driver)
         );
     }
@@ -35,11 +35,11 @@ public class CodecTests
     public void TestCodec()
     {
         var person = new Person("Silly Billy", 18, Optional.Of(true));
-        var encoded = Person.Codec.Encode(JsonTranscoder.INSTANCE, person);
+        var encoded = Person.CODEC.Encode(JsonTranscoder.INSTANCE, person);
 
         Console.WriteLine(encoded.GetRawText()); // {"name":"Silly Billy","age":18,"is_awesome":true}
 
-        var decoded = Person.Codec.Decode(JsonTranscoder.INSTANCE, encoded);
+        var decoded = Person.CODEC.Decode(JsonTranscoder.INSTANCE, encoded);
         Console.WriteLine(decoded); // Person { name = Silly Billy, age = 18, isAwesome = True }
 
         Assert.That(decoded, Is.EqualTo(person));
@@ -48,9 +48,9 @@ public class CodecTests
     [Test]
     public void TestDecodeFromString()
     {
-        var decoded = Person.Codec.Decode(JsonTranscoder.INSTANCE, JsonDocument.Parse(jeson).RootElement);
-        Assert.That(decoded.name, Is.EqualTo("Synesthesia Dev"));
-        Assert.That(decoded.age, Is.EqualTo(20));
-        Assert.That(Optional.Empty<bool>(), Is.EqualTo(decoded.isAwesome));
+        var decoded = Person.CODEC.Decode(JsonTranscoder.INSTANCE, JsonDocument.Parse(jeson).RootElement);
+        Assert.That(decoded.Name, Is.EqualTo("Synesthesia Dev"));
+        Assert.That(decoded.Age, Is.EqualTo(20));
+        Assert.That(Optional.Empty<bool>(), Is.EqualTo(decoded.IsAwesome));
     }
 }

@@ -6,15 +6,15 @@ namespace Codon.Tests;
 
 public class ListMapEnumAndMoreCodecTests
 {
-    private readonly JsonTranscoder _t = JsonTranscoder.INSTANCE;
+    private readonly JsonTranscoder t = JsonTranscoder.INSTANCE;
 
     [Test]
     public void List_Primitive_RoundTrip()
     {
         var codec = Codecs.INT.List();
         var list = new List<int> { 1, 2, 3, 4 };
-        var encoded = codec.Encode(_t, list);
-        var decoded = codec.Decode(_t, encoded);
+        var encoded = codec.Encode(t, list);
+        var decoded = codec.Decode(t, encoded);
         Assert.That(decoded, Is.EqualTo(list));
     }
 
@@ -23,8 +23,8 @@ public class ListMapEnumAndMoreCodecTests
     {
         var codec = Codecs.STRING.List();
         var list = new List<string>();
-        var encoded = codec.Encode(_t, list);
-        var decoded = codec.Decode(_t, encoded);
+        var encoded = codec.Encode(t, list);
+        var decoded = codec.Decode(t, encoded);
         Assert.That(decoded, Is.Empty);
     }
 
@@ -33,8 +33,8 @@ public class ListMapEnumAndMoreCodecTests
     {
         var codec = Codecs.STRING.MapTo(Codecs.INT);
         var map = new Dictionary<string, int> { { "a", 1 }, { "b", 2 } };
-        var encoded = codec.Encode(_t, map);
-        var decoded = codec.Decode(_t, encoded);
+        var encoded = codec.Encode(t, map);
+        var decoded = codec.Decode(t, encoded);
         Assert.That(decoded, Is.EqualTo(map));
     }
 
@@ -43,8 +43,8 @@ public class ListMapEnumAndMoreCodecTests
     {
         var codec = Codecs.STRING.MapTo(Codecs.STRING);
         var map = new Dictionary<string, string>();
-        var encoded = codec.Encode(_t, map);
-        var decoded = codec.Decode(_t, encoded);
+        var encoded = codec.Encode(t, map);
+        var decoded = codec.Decode(t, encoded);
         Assert.That(decoded, Is.Empty);
     }
 
@@ -54,8 +54,8 @@ public class ListMapEnumAndMoreCodecTests
     public void Enum_RoundTrip()
     {
         var codec = Codecs.Enum<Color>();
-        var encoded = codec.Encode(_t, Color.Green);
-        var decoded = codec.Decode(_t, encoded);
+        var encoded = codec.Encode(t, Color.Green);
+        var decoded = codec.Decode(t, encoded);
         Assert.That(decoded, Is.EqualTo(Color.Green));
     }
 
@@ -68,17 +68,17 @@ public class ListMapEnumAndMoreCodecTests
             from: i => i.ToString()
         );
         var value = 12345;
-        var encoded = intAsStringCodec.Encode(_t, value);
-        var decoded = intAsStringCodec.Decode(_t, encoded);
+        var encoded = intAsStringCodec.Encode(t, value);
+        var decoded = intAsStringCodec.Decode(t, encoded);
         Assert.That(decoded, Is.EqualTo(value));
     }
 
     private abstract record Shape;
-    private record Rect(int w, int h) : Shape;
+    private record Rect(int W, int H) : Shape;
 
-    private static readonly StructCodec<Rect> RectCodec = StructCodec.Of(
-        "w", Codecs.INT, r => r.w,
-        "h", Codecs.INT, r => r.h,
+    private static readonly StructCodec<Rect> rect_codec = StructCodec.Of(
+        "w", Codecs.INT, r => r.W,
+        "h", Codecs.INT, r => r.H,
         (w, h) => new Rect(w, h)
     );
 
@@ -86,34 +86,34 @@ public class ListMapEnumAndMoreCodecTests
 
     private class UpcastStructCodec<R, V> : StructCodec<R>
     {
-        private readonly StructCodec<V> _inner;
-        private readonly Func<R, V> _down;
-        private readonly Func<V, R> _up;
+        private readonly StructCodec<V> inner;
+        private readonly Func<R, V> down;
+        private readonly Func<V, R> up;
 
         public UpcastStructCodec(StructCodec<V> inner, Func<R, V> down, Func<V, R> up)
         {
-            _inner = inner;
-            _down = down;
-            _up = up;
+            this.inner = inner;
+            this.down = down;
+            this.up = up;
         }
 
         public override T EncodeToMap<T>(ITranscoder<T> transcoder, R value, IVirtualMapBuilder<T> mapBuilder)
         {
-            return _inner.EncodeToMap<T>(transcoder, _down(value), mapBuilder);
+            return inner.EncodeToMap<T>(transcoder, down(value), mapBuilder);
         }
 
         public override R DecodeFromMap<T>(ITranscoder<T> transcoder, IVirtualMap<T> map)
         {
-            var v = _inner.DecodeFromMap<T>(transcoder, map);
-            return _up(v);
+            var v = inner.DecodeFromMap<T>(transcoder, map);
+            return up(v);
         }
     }
 
-    private static readonly StructCodec<Shape> ShapeCodec = Codecs.Enum<Kind>().Union<Shape>(
+    private static readonly StructCodec<Shape> shape_codec = Codecs.Enum<Kind>().Union<Shape>(
         keyField: "kind",
         serializers: kind => kind switch
         {
-            Kind.Rect => new UpcastStructCodec<Shape, Rect>(RectCodec, r => (Rect)r, v => v),
+            Kind.Rect => new UpcastStructCodec<Shape, Rect>(rect_codec, r => (Rect)r, v => v),
             _ => throw new InvalidOperationException()
         },
         keyFunc: shape => shape switch
@@ -127,11 +127,11 @@ public class ListMapEnumAndMoreCodecTests
     public void UnionCodec_EncodeAddsDiscriminator_AndRoundTrip_Works()
     {
         Shape shape = new Rect(3, 4);
-        var encoded = ShapeCodec.Encode(_t, shape);
-        var map = _t.DecodeMap(encoded);
+        var encoded = shape_codec.Encode(t, shape);
+        var map = t.DecodeMap(encoded);
         Assert.That(map.HasValue("kind"), Is.True);
-        Assert.That(_t.DecodeString(map.GetValue("kind")), Is.EqualTo("Rect"));
-        var decoded = ShapeCodec.Decode(_t, encoded);
+        Assert.That(t.DecodeString(map.GetValue("kind")), Is.EqualTo("Rect"));
+        var decoded = shape_codec.Decode(t, encoded);
         Assert.That(decoded, Is.EqualTo(shape));
     }
 
@@ -141,17 +141,17 @@ public class ListMapEnumAndMoreCodecTests
         var inner = Codecs.INT;
         var forward = inner.ForwardRef();
         var val = 77;
-        var enc = forward.Encode(_t, val);
-        var dec = forward.Decode(_t, enc);
+        var enc = forward.Encode(t, val);
+        var dec = forward.Decode(t, enc);
         Assert.That(dec, Is.EqualTo(val));
     }
 
-    private record Nested(string name, List<int> nums, Dictionary<string, int> map);
+    private record Nested(string Name, List<int> Nums, Dictionary<string, int> Map);
 
-    private static readonly StructCodec<Nested> NestedCodec = StructCodec.Of(
-        "name", Codecs.STRING, n => n.name,
-        "nums", Codecs.INT.List(), n => n.nums,
-        "map", Codecs.STRING.MapTo(Codecs.INT), n => n.map,
+    private static readonly StructCodec<Nested> nested_codec = StructCodec.Of(
+        "name", Codecs.STRING, n => n.Name,
+        "nums", Codecs.INT.List(), n => n.Nums,
+        "map", Codecs.STRING.MapTo(Codecs.INT), n => n.Map,
         (name, nums, map) => new Nested(name, nums, map)
     );
 
@@ -163,15 +163,15 @@ public class ListMapEnumAndMoreCodecTests
             new List<int> { 1, 2, 3 },
             new Dictionary<string, int> { { "a", 1 }, { "b", 2 } }
         );
-        var enc = NestedCodec.Encode(_t, n);
-        var dec = NestedCodec.Decode(_t, enc);
-        Assert.That(dec.name, Is.EqualTo(n.name));
-        CollectionAssert.AreEqual(n.nums, dec.nums);
-        Assert.That(dec.map.Count, Is.EqualTo(n.map.Count));
-        foreach (var kv in n.map)
+        var enc = nested_codec.Encode(t, n);
+        var dec = nested_codec.Decode(t, enc);
+        Assert.That(dec.Name, Is.EqualTo(n.Name));
+        CollectionAssert.AreEqual(n.Nums, dec.Nums);
+        Assert.That(dec.Map.Count, Is.EqualTo(n.Map.Count));
+        foreach (var kv in n.Map)
         {
-            Assert.That(dec.map.ContainsKey(kv.Key), Is.True);
-            Assert.That(dec.map[kv.Key], Is.EqualTo(kv.Value));
+            Assert.That(dec.Map.ContainsKey(kv.Key), Is.True);
+            Assert.That(dec.Map[kv.Key], Is.EqualTo(kv.Value));
         }
     }
 }

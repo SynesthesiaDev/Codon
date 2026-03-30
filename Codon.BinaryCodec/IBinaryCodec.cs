@@ -1,5 +1,5 @@
 ﻿using System;
-using Codon.Buffer;
+using DotNetty.Buffers;
 
 #pragma warning disable CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
 
@@ -7,27 +7,27 @@ namespace Codon.Binary;
 
 public static class BinaryCodec
 {
-    public static readonly IBinaryCodec<bool> Boolean = new BinaryCodecs.BooleanBinaryCodec();
+    public static readonly IBinaryCodec<bool> BOOLEAN = new BinaryCodecs.BooleanBinaryCodec();
 
-    public static readonly IBinaryCodec<byte> Byte = new BinaryCodecs.ByteBinaryCodec();
+    public static readonly IBinaryCodec<byte> BYTE = new BinaryCodecs.ByteBinaryCodec();
 
-    public static readonly IBinaryCodec<int> Int = new BinaryCodecs.IntBinaryCodec();
+    public static readonly IBinaryCodec<int> INT = new BinaryCodecs.IntBinaryCodec();
 
-    public static readonly IBinaryCodec<long> Long = new BinaryCodecs.LongBinaryCodec();
+    public static readonly IBinaryCodec<long> LONG = new BinaryCodecs.LongBinaryCodec();
 
-    public static readonly IBinaryCodec<double> Double = new BinaryCodecs.DoubleBinaryCodec();
+    public static readonly IBinaryCodec<double> DOUBLE = new BinaryCodecs.DoubleBinaryCodec();
 
-    public static readonly IBinaryCodec<float> Float = new BinaryCodecs.FloatBinaryCodec();
+    public static readonly IBinaryCodec<float> FLOAT = new BinaryCodecs.FloatBinaryCodec();
 
-    public static readonly IBinaryCodec<int> VarInt = new BinaryCodecs.VarIntBinaryCodec();
+    public static readonly IBinaryCodec<int> VAR_INT = new BinaryCodecs.VarIntBinaryCodec();
 
-    public static readonly IBinaryCodec<byte[]> ByteArray = new BinaryCodecs.ByteArrayBinaryCodec();
+    public static readonly IBinaryCodec<byte[]> BYTE_ARRAY = new BinaryCodecs.ByteArrayBinaryCodec();
 
-    public static readonly IBinaryCodec<BinaryBuffer> BinaryBuffer = new BinaryCodecs.BinaryBufferBinaryCodec();
+    public static readonly IBinaryCodec<IByteBuffer> BYTE_BUFFER = new BinaryCodecs.ByteBufferBinaryCodec();
 
-    public static readonly IBinaryCodec<byte[]> RawBytes = new BinaryCodecs.RawBytesBinaryCodec();
+    public static readonly IBinaryCodec<byte[]> RAW_BYTES = new BinaryCodecs.RawBytesBinaryCodec();
 
-    public static readonly IBinaryCodec<string> String = new BinaryCodecs.StringBinaryCodec();
+    public static readonly IBinaryCodec<string> STRING = new BinaryCodecs.StringBinaryCodec();
 
     public static BinaryCodecs.RecursiveBinaryCodec<T> Recursive<T>(Func<IBinaryCodec<T>, IBinaryCodec<T>> self) where T : notnull
     {
@@ -306,8 +306,8 @@ public static class BinaryCodec
 
 public interface IBinaryCodec<T>
 {
-    void Write(BinaryBuffer buffer, T value);
-    T Read(BinaryBuffer buffer);
+    void Write(IByteBuffer buffer, T value);
+    T Read(IByteBuffer buffer);
 
     BinaryCodecs.OptionalBinaryCodec<T> Optional()
     {

@@ -5,12 +5,12 @@ namespace Codon.Tests;
 
 public class RecursiveCodecTests
 {
-    public record Node(string name, List<Node> children)
+    public record Node(string Name, List<Node> Children)
     {
-        public static readonly Codec<Node> Codec = Codecs.Recursive<Node>(self =>
+        public static readonly Codec<Node> CODEC = Codecs.Recursive<Node>(self =>
             StructCodec.Of(
-                "name", Codecs.STRING, n => n.name,
-                "children", self.List(), n => n.children,
+                "name", Codecs.STRING, n => n.Name,
+                "children", self.List(), n => n.Children,
                 (name, children) => new Node(name, children)
             )
         );
@@ -27,21 +27,21 @@ public class RecursiveCodecTests
             ]
         );
 
-        var encoded = Node.Codec.Encode(JsonTranscoder.INSTANCE, tree);
+        var encoded = Node.CODEC.Encode(JsonTranscoder.INSTANCE, tree);
 
         var json = encoded.GetRawText();
         Console.WriteLine(json);
         Assert.That(json, Does.Contain("\"name\":\"root\""));
         Assert.That(json, Does.Contain("\"children\""));
 
-        var decoded = Node.Codec.Decode(JsonTranscoder.INSTANCE, encoded);
+        var decoded = Node.CODEC.Decode(JsonTranscoder.INSTANCE, encoded);
 
-        Assert.That(decoded.name, Is.EqualTo("root"));
-        Assert.That(decoded.children, Has.Count.EqualTo(2));
-        Assert.That(decoded.children[0].name, Is.EqualTo("child1"));
-        Assert.That(decoded.children[0].children, Has.Count.EqualTo(0));
-        Assert.That(decoded.children[1].name, Is.EqualTo("child2"));
-        Assert.That(decoded.children[1].children, Has.Count.EqualTo(1));
-        Assert.That(decoded.children[1].children[0].name, Is.EqualTo("grandchild1"));
+        Assert.That(decoded.Name, Is.EqualTo("root"));
+        Assert.That(decoded.Children, Has.Count.EqualTo(2));
+        Assert.That(decoded.Children[0].Name, Is.EqualTo("child1"));
+        Assert.That(decoded.Children[0].Children, Has.Count.EqualTo(0));
+        Assert.That(decoded.Children[1].Name, Is.EqualTo("child2"));
+        Assert.That(decoded.Children[1].Children, Has.Count.EqualTo(1));
+        Assert.That(decoded.Children[1].Children[0].Name, Is.EqualTo("grandchild1"));
     }
 }

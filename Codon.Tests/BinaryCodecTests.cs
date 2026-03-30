@@ -1,14 +1,14 @@
-using Codon.Buffer;
 using Codon.Binary;
 using Codon.Optionals;
+using DotNetty.Buffers;
 
 namespace Codon.Tests;
 
 public class BinaryCodecTests
 {
-    private static T RoundTrip<T>(IBinaryCodec<T> codec, T value)
+    private static T roundTrip<T>(IBinaryCodec<T> codec, T value)
     {
-        var buf = new BinaryBuffer();
+        var buf = Unpooled.Buffer();
         codec.Write(buf, value!);
         return codec.Read(buf);
     }
@@ -16,22 +16,22 @@ public class BinaryCodecTests
     [Test]
     public void PrimitiveCodecs_RoundTrip()
     {
-        Assert.That(RoundTrip(BinaryCodec.Boolean, true), Is.True);
-        Assert.That(RoundTrip(BinaryCodec.Boolean, false), Is.False);
+        Assert.That(roundTrip(BinaryCodec.BOOLEAN, true), Is.True);
+        Assert.That(roundTrip(BinaryCodec.BOOLEAN, false), Is.False);
 
-        Assert.That(RoundTrip(BinaryCodec.Byte, (byte)0), Is.EqualTo((byte)0));
-        Assert.That(RoundTrip(BinaryCodec.Byte, (byte)255), Is.EqualTo((byte)255));
+        Assert.That(roundTrip(BinaryCodec.BYTE, (byte)0), Is.EqualTo((byte)0));
+        Assert.That(roundTrip(BinaryCodec.BYTE, (byte)255), Is.EqualTo((byte)255));
 
-        Assert.That(RoundTrip(BinaryCodec.Int, 0), Is.EqualTo(0));
-        Assert.That(RoundTrip(BinaryCodec.Int, 123456789), Is.EqualTo(123456789));
-        Assert.That(RoundTrip(BinaryCodec.Int, -123456789), Is.EqualTo(-123456789));
+        Assert.That(roundTrip(BinaryCodec.INT, 0), Is.EqualTo(0));
+        Assert.That(roundTrip(BinaryCodec.INT, 123456789), Is.EqualTo(123456789));
+        Assert.That(roundTrip(BinaryCodec.INT, -123456789), Is.EqualTo(-123456789));
 
-        Assert.That(RoundTrip(BinaryCodec.Long, 0L), Is.EqualTo(0L));
-        Assert.That(RoundTrip(BinaryCodec.Long, long.MaxValue), Is.EqualTo(long.MaxValue));
-        Assert.That(RoundTrip(BinaryCodec.Long, long.MinValue), Is.EqualTo(long.MinValue));
+        Assert.That(roundTrip(BinaryCodec.LONG, 0L), Is.EqualTo(0L));
+        Assert.That(roundTrip(BinaryCodec.LONG, long.MaxValue), Is.EqualTo(long.MaxValue));
+        Assert.That(roundTrip(BinaryCodec.LONG, long.MinValue), Is.EqualTo(long.MinValue));
 
-        Assert.That(RoundTrip(BinaryCodec.Float, 123.456f), Is.EqualTo(123.456f));
-        Assert.That(RoundTrip(BinaryCodec.Double, -123.456789), Is.EqualTo(-123.456789));
+        Assert.That(roundTrip(BinaryCodec.FLOAT, 123.456f), Is.EqualTo(123.456f));
+        Assert.That(roundTrip(BinaryCodec.DOUBLE, -123.456789), Is.EqualTo(-123.456789));
     }
 
     [Test]
@@ -40,9 +40,9 @@ public class BinaryCodecTests
         var values = new[] { 0, 1, 2, 127, 128, 129, 16384, int.MaxValue, -1, -2, int.MinValue };
         foreach (var v in values)
         {
-            var buf = new BinaryBuffer();
-            BinaryCodec.VarInt.Write(buf, v);
-            var read = BinaryCodec.VarInt.Read(buf);
+            var buf = Unpooled.Buffer();
+            BinaryCodec.VAR_INT.Write(buf, v);
+            var read = BinaryCodec.VAR_INT.Read(buf);
             Assert.That(read, Is.EqualTo(v), $"VarInt roundtrip failed for {v}");
         }
     }
@@ -51,54 +51,54 @@ public class BinaryCodecTests
     public void ByteArray_And_RawBytes_RoundTrip()
     {
         var empty = Array.Empty<byte>();
-        Assert.That(RoundTrip(BinaryCodec.ByteArray, empty), Is.EqualTo(empty));
+        Assert.That(roundTrip(BinaryCodec.BYTE_ARRAY, empty), Is.EqualTo(empty));
 
         var data = Enumerable.Range(0, 256).Select(i => (byte)i).ToArray();
-        Assert.That(RoundTrip(BinaryCodec.ByteArray, data), Is.EqualTo(data));
+        Assert.That(roundTrip(BinaryCodec.BYTE_ARRAY, data), Is.EqualTo(data));
 
-        var buf = new BinaryBuffer();
-        BinaryCodec.RawBytes.Write(buf, data);
-        var read = BinaryCodec.RawBytes.Read(buf);
+        var buf = Unpooled.Buffer();
+        BinaryCodec.RAW_BYTES.Write(buf, data);
+        var read = BinaryCodec.RAW_BYTES.Read(buf);
         Assert.That(read, Is.EqualTo(data));
     }
 
     [Test]
     public void BinaryBuffer_Codec_RoundTrip()
     {
-        var original = new BinaryBuffer();
+        var original = Unpooled.Buffer();
         original.WriteBytes("hello"u8.ToArray());
         original.WriteInt(42);
 
-        var buf = new BinaryBuffer();
-        BinaryCodec.BinaryBuffer.Write(buf, original);
-        var round = BinaryCodec.BinaryBuffer.Read(buf);
+        var buf = Unpooled.Buffer();
+        BinaryCodec.BYTE_BUFFER.Write(buf, original);
+        var round = BinaryCodec.BYTE_BUFFER.Read(buf);
 
-        Assert.That(round.ToArray(), Is.EqualTo(original.ToArray()));
+        Assert.That(round.Array, Is.EqualTo(original.Array));
     }
 
     [Test]
     public void String_Codec_RoundTrip()
     {
-        Assert.That(RoundTrip(BinaryCodec.String, string.Empty), Is.EqualTo(string.Empty));
-        Assert.That(RoundTrip(BinaryCodec.String, "ascii"), Is.EqualTo("ascii"));
+        Assert.That(roundTrip(BinaryCodec.STRING, string.Empty), Is.EqualTo(string.Empty));
+        Assert.That(roundTrip(BinaryCodec.STRING, "ascii"), Is.EqualTo("ascii"));
         var unicode = "你好世界 👋🌍";
-        Assert.That(RoundTrip(BinaryCodec.String, unicode), Is.EqualTo(unicode));
+        Assert.That(roundTrip(BinaryCodec.STRING, unicode), Is.EqualTo(unicode));
     }
 
     [Test]
     public void Optional_Codec_WritesPresenceAndValue()
     {
-        var optionalInt = BinaryCodec.Int.Optional();
+        var optionalInt = BinaryCodec.INT.Optional();
 
         var some = Optional.Of(123);
-        var bufSome = new BinaryBuffer();
+        var bufSome = Unpooled.Buffer();
         optionalInt.Write(bufSome, some);
         var readSome = optionalInt.Read(bufSome);
         Assert.That(readSome.IsPresent);
-        Assert.AreEqual(readSome.Value, some.Value);
+        Assert.That(some.Value, Is.EqualTo(readSome.Value));
 
         var none = Optional.Empty<int>();
-        var bufNone = new BinaryBuffer();
+        var bufNone = Unpooled.Buffer();
         optionalInt.Write(bufNone, none);
         var readNone = optionalInt.Read(bufNone);
         Assert.That(readNone.IsMissing);
@@ -115,21 +115,21 @@ public class BinaryCodecTests
     public void Enum_Codec_UsesOrdinal()
     {
         var codec = BinaryCodec.Enum<TestEnum>();
-        Assert.That(RoundTrip(codec, TestEnum.A), Is.EqualTo(TestEnum.A));
-        Assert.That(RoundTrip(codec, TestEnum.B), Is.EqualTo(TestEnum.B));
-        Assert.That(RoundTrip(codec, TestEnum.C), Is.EqualTo(TestEnum.C));
+        Assert.That(roundTrip(codec, TestEnum.A), Is.EqualTo(TestEnum.A));
+        Assert.That(roundTrip(codec, TestEnum.B), Is.EqualTo(TestEnum.B));
+        Assert.That(roundTrip(codec, TestEnum.C), Is.EqualTo(TestEnum.C));
     }
 
     [Test]
     public void Transformative_Codec_RoundTrip()
     {
-        var codec = BinaryCodec.Int.Transform(
+        var codec = BinaryCodec.INT.Transform(
             from: s => s.Length,
             to: n => new string('x', n)
         );
 
         var s = "hello";
-        var buf = new BinaryBuffer();
+        var buf = Unpooled.Buffer();
         codec.Write(buf, s);
         var read = codec.Read(buf);
         Assert.That(read, Is.EqualTo(new string('x', s.Length)));
@@ -138,14 +138,14 @@ public class BinaryCodecTests
     [Test]
     public void List_And_Dictionary_Codecs_RoundTrip()
     {
-        BinaryCodecs.ListBinaryCodec<string> listCodec = BinaryCodec.String.List();
+        BinaryCodecs.ListBinaryCodec<string> listCodec = BinaryCodec.STRING.List();
 
         var list = new List<string> { "a", "b", "c" };
-        Assert.That(RoundTrip(listCodec, list), Is.EqualTo(list));
+        Assert.That(roundTrip(listCodec, list), Is.EqualTo(list));
 
-        var mapCodec = BinaryCodec.Int.MapTo(BinaryCodec.String);
+        var mapCodec = BinaryCodec.INT.MapTo(BinaryCodec.STRING);
         var dict = new Dictionary<int, string> { { 1, "one" }, { 2, "two" }, { 3, "three" } };
-        var round = RoundTrip(mapCodec, dict);
+        var round = roundTrip(mapCodec, dict);
         Assert.That(round, Has.Count.EqualTo(3));
         foreach (var kv in dict) Assert.That(round[kv.Key], Is.EqualTo(kv.Value));
     }
@@ -154,12 +154,12 @@ public class BinaryCodecTests
     public void Union_Codec_RoundTrip_WithInt_KeyByte()
     {
         var union = new BinaryCodecs.UnionBinaryCodec<int, byte>(
-            keyCodec: BinaryCodec.Byte,
+            keyCodec: BinaryCodec.BYTE,
             keyFunc: v => (byte)(v % 2),
-            serializerFactory: _ => BinaryCodec.Int
+            serializerFactory: _ => BinaryCodec.INT
         );
 
-        var round = RoundTrip(union, 7);
+        var round = roundTrip(union, 7);
         Assert.That(round, Is.EqualTo(7));
     }
 
@@ -169,21 +169,21 @@ public class BinaryCodecTests
     public void Composite_Codec_P3_RoundTrip()
     {
         var personCodec = BinaryCodec.Of(
-            BinaryCodec.String, p => p.Name,
-            BinaryCodec.Int, p => p.Age,
-            BinaryCodec.Boolean, p => p.Active,
+            BinaryCodec.STRING, p => p.Name,
+            BinaryCodec.INT, p => p.Age,
+            BinaryCodec.BOOLEAN, p => p.Active,
             (name, age, active) => new Person(name, age, active)
         );
 
         var p = new Person("Alice", 30, true);
-        Assert.That(RoundTrip(personCodec, p), Is.EqualTo(p));
+        Assert.That(roundTrip(personCodec, p), Is.EqualTo(p));
     }
 
     public record Node(string Name, List<Node> Children)
     {
-        public static readonly IBinaryCodec<Node> Codec = BinaryCodec.Recursive<Node>(self =>
+        public static readonly IBinaryCodec<Node> CODEC = BinaryCodec.Recursive<Node>(self =>
             BinaryCodec.Of(
-                BinaryCodec.String, n => n.Name,
+                BinaryCodec.STRING, n => n.Name,
                 self.List(), n => n.Children,
                 (name, children) => new Node(name, children)
             )
@@ -201,7 +201,7 @@ public class BinaryCodecTests
             ]
         );
 
-        var round = RoundTrip(Node.Codec, tree);
+        var round = roundTrip(Node.CODEC, tree);
         Assert.That(round.Name, Is.EqualTo("root"));
         Assert.That(round.Children, Has.Count.EqualTo(2));
         Assert.That(round.Children[0].Name, Is.EqualTo("child1"));
