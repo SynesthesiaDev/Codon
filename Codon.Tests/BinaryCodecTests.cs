@@ -13,6 +13,21 @@ public class BinaryCodecTests
         return codec.Read(buf);
     }
 
+    private record VeryEmptyClass
+    {
+        public static readonly IBinaryCodec<VeryEmptyClass> CODEC = BinaryCodec.Empty(() => new VeryEmptyClass());
+    }
+
+    [Test]
+    public void TestEmptyCodec()
+    {
+        var emptyClass = new VeryEmptyClass();
+        var buf = Unpooled.Buffer();
+        VeryEmptyClass.CODEC.Write(buf, emptyClass);
+        var read = VeryEmptyClass.CODEC.Read(buf);
+        Assert.That(read, Is.TypeOf<VeryEmptyClass>());
+    }
+
     [Test]
     public void PrimitiveCodecs_RoundTrip()
     {
@@ -45,6 +60,38 @@ public class BinaryCodecTests
             var read = BinaryCodec.VAR_INT.Read(buf);
             Assert.That(read, Is.EqualTo(v), $"VarInt roundtrip failed for {v}");
         }
+    }
+
+    [Test]
+    public void Guid_RoundTrip()
+    {
+        var guid = Guid.NewGuid();
+        var buf = Unpooled.Buffer();
+        BinaryCodec.GUID.Write(buf, guid);
+        var read = BinaryCodec.GUID.Read(buf);
+        Assert.That(read, Is.EqualTo(guid));
+    }
+
+    [Test]
+    public void Flags_RoundTrip()
+    {
+        const FlagsTest flags = FlagsTest.SoCool & FlagsTest.Gay;
+        var buf = Unpooled.Buffer();
+        BinaryCodec.Flags<FlagsTest>().Write(buf, flags);
+        var read = BinaryCodec.Flags<FlagsTest>().Read(buf);
+        Assert.That(read, Is.EqualTo(flags));
+    }
+
+    [Flags]
+    enum FlagsTest
+    {
+        Testing = 0,
+        Woah = 1,
+        SoCool = 2,
+        Flags = 4,
+        Im = 8,
+        So = 16,
+        Gay = 32
     }
 
     [Test]

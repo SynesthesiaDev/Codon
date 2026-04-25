@@ -132,10 +132,13 @@ public static class BinaryCodecs
         }
     }
 
-    public class ByteArrayBinaryCodec : IBinaryCodec<byte[]>
+    public class ByteArrayBinaryCodec(int? maxSize = null) : IBinaryCodec<byte[]>
     {
         public void Write(IByteBuffer buffer, byte[] value)
         {
+            if (maxSize != null && value.Length > maxSize)
+                throw new ArgumentException($"The byte array is longer than maximum allowed ({value.Length} > {maxSize})", nameof(value));
+
             BinaryCodec.VAR_INT.Write(buffer, value.Length);
             buffer.WriteBytes(value);
         }
@@ -143,7 +146,12 @@ public static class BinaryCodecs
         public byte[] Read(IByteBuffer buffer)
         {
             var size = BinaryCodec.VAR_INT.Read(buffer);
-            return buffer.ReadBytes(size).ToByteArraySafe(size);
+            if (size > maxSize)
+                throw new InvalidDataException($"The read byte array is longer than maximum allowed (${size} > {maxSize}");
+
+            var destination = new byte[size];
+            buffer.ReadBytes(destination);
+            return destination;
         }
     }
 
@@ -163,10 +171,12 @@ public static class BinaryCodecs
         }
     }
 
-    public class StringBinaryCodec : IBinaryCodec<string>
+    public class StringBinaryCodec(int? maxStringLength = null) : IBinaryCodec<string>
     {
         public void Write(IByteBuffer buffer, string value)
         {
+            if (maxStringLength != null && value.Length > maxStringLength)
+                throw new ArgumentException($"String is longer than maximum allowed (${value.Length} > {maxStringLength})", nameof(value));
             var stringBytes = Encoding.UTF8.GetBytes(value);
             BinaryCodec.VAR_INT.Write(buffer, stringBytes.Length);
             buffer.WriteBytes(stringBytes);
@@ -175,7 +185,11 @@ public static class BinaryCodecs
         public string Read(IByteBuffer buffer)
         {
             var size = BinaryCodec.VAR_INT.Read(buffer);
-            if (size < 0) throw new InvalidDataException("String cannot have negative length");
+            if (size < 0) throw new InvalidDataException("The read string has negative length");
+            if (size == 0) return string.Empty;
+            if (size > maxStringLength)
+                throw new InvalidDataException($"Read string is longer than maximum allowed (${size} > {maxStringLength}");
+
             var stringBytes = buffer.ReadBytes(size).ToByteArraySafe();
             return Encoding.UTF8.GetString(stringBytes);
         }
@@ -235,10 +249,13 @@ public static class BinaryCodecs
         }
     }
 
-    public class DictionaryBinaryCodec<K, V>(IBinaryCodec<K> keyCodec, IBinaryCodec<V> valueCodec) : IBinaryCodec<Dictionary<K, V>> where K : notnull where V : notnull
+    public class DictionaryBinaryCodec<K, V>(IBinaryCodec<K> keyCodec, IBinaryCodec<V> valueCodec, int? maxSize = null) : IBinaryCodec<Dictionary<K, V>> where K : notnull where V : notnull
     {
         public void Write(IByteBuffer buffer, Dictionary<K, V> value)
         {
+            if (maxSize != null && value.Count > maxSize)
+                throw new ArgumentException($"There are more map entries than maximum allowed ({value.Count} > {maxSize})", nameof(value));
+
             BinaryCodec.VAR_INT.Write(buffer, value.Count);
             foreach (var keyValuePair in value)
             {
@@ -250,7 +267,10 @@ public static class BinaryCodecs
         public Dictionary<K, V> Read(IByteBuffer buffer)
         {
             var dict = new Dictionary<K, V>();
-            var size = BinaryCodec.VAR_INT.Read(buffer); // how big is my dict...
+            var size = BinaryCodec.VAR_INT.Read(buffer); // how big is my dic(t)...
+
+            if (maxSize != null && size > maxSize)
+                throw new InvalidDataException($"The read dictionary has more entries than maximum allowed ({size} > {maxSize})");
 
             for (var i = 0; i < size; i++)
             {
@@ -263,10 +283,13 @@ public static class BinaryCodecs
         }
     }
 
-    public class ListBinaryCodec<T>(IBinaryCodec<T> innerCodec) : IBinaryCodec<List<T>>
+    public class ListBinaryCodec<T>(IBinaryCodec<T> innerCodec, int? maxSize = null) : IBinaryCodec<List<T>>
     {
         public void Write(IByteBuffer buffer, List<T> value)
         {
+            if (maxSize != null && value.Count > maxSize)
+                throw new ArgumentException($"There are more list entries than maximum allowed ({value.Count} > {maxSize})", nameof(value));
+
             BinaryCodec.VAR_INT.Write(buffer, value.Count);
             value.ForEach(item => innerCodec.Write(buffer, item));
         }
@@ -275,6 +298,9 @@ public static class BinaryCodecs
         {
             var list = new List<T>();
             var size = BinaryCodec.VAR_INT.Read(buffer);
+
+            if (size > maxSize)
+                throw new InvalidDataException($"The read list has more entries than maximum allowed ({size} > {maxSize})");
 
             for (var i = 0; i < size; i++) list.Add(innerCodec.Read(buffer));
 
@@ -337,6 +363,20 @@ public static class BinaryCodecs
             if (ordinal < 0 || ordinal >= entries.Length) throw new IndexOutOfRangeException($"Ordinal {ordinal} is outside the range [0, {entries.Length - 1}] for enum {typeof(E).Name}");
 
             return (E)entries.GetValue(ordinal)!;
+        }
+    }
+
+    public class BinaryCodecEmpty<Result>(
+        Func<Result> func
+    ) : IBinaryCodec<Result>
+    {
+        public void Write(IByteBuffer buffer, Result value)
+        {
+        }
+
+        public Result Read(IByteBuffer buffer)
+        {
+            return func.Invoke();
         }
     }
 

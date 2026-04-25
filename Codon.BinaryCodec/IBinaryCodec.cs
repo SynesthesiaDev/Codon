@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using DotNetty.Buffers;
 
 #pragma warning disable CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
@@ -29,6 +30,8 @@ public static class BinaryCodec
 
     public static readonly IBinaryCodec<string> STRING = new BinaryCodecs.StringBinaryCodec();
 
+    public static readonly IBinaryCodec<Guid> GUID = BYTE_ARRAY.Transform(guid => guid.ToByteArray(), bytes => new Guid(bytes));
+
     public static BinaryCodecs.RecursiveBinaryCodec<T> Recursive<T>(Func<IBinaryCodec<T>, IBinaryCodec<T>> self) where T : notnull
     {
         return new BinaryCodecs.RecursiveBinaryCodec<T>(self);
@@ -38,6 +41,13 @@ public static class BinaryCodec
     {
         return new BinaryCodecs.EnumBinaryCodec<E>();
     }
+
+    public static IBinaryCodec<Te> Flags<Te>() where Te : struct, Enum
+    {
+        return BYTE.Transform(te => Unsafe.As<Te, byte>(ref te), by => Unsafe.As<byte, Te>(ref by));
+    }
+
+    public static IBinaryCodec<R> Empty<R>(Func<R> func) => new BinaryCodecs.BinaryCodecEmpty<R>(func);
 
     public static IBinaryCodec<R> Of<P1, R>
     (
