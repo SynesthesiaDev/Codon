@@ -6,7 +6,7 @@ namespace Codon.Tests;
 
 public class BinaryCodecTests
 {
-    private static T roundTrip<T>(IBinaryCodec<T> codec, T value)
+    private static T roundTrip<T>(BinaryCodec<T> codec, T value)
     {
         var buf = Unpooled.Buffer();
         codec.Write(buf, value!);
@@ -15,7 +15,7 @@ public class BinaryCodecTests
 
     private record VeryEmptyClass
     {
-        public static readonly IBinaryCodec<VeryEmptyClass> CODEC = BinaryCodec.Empty(() => new VeryEmptyClass());
+        public static readonly BinaryCodec<VeryEmptyClass> CODEC = BinaryCodec.Empty(() => new VeryEmptyClass());
     }
 
     [Test]
@@ -228,7 +228,7 @@ public class BinaryCodecTests
 
     public record Node(string Name, List<Node> Children)
     {
-        public static readonly IBinaryCodec<Node> CODEC = BinaryCodec.Recursive<Node>(self =>
+        public static readonly BinaryCodec<Node> CODEC = BinaryCodec.Recursive<Node>(self =>
             BinaryCodec.Of(
                 BinaryCodec.STRING, n => n.Name,
                 self.List(), n => n.Children,
