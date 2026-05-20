@@ -120,7 +120,14 @@ public class BinaryCodecTests
         BinaryCodec.BYTE_BUFFER.Write(buf, original);
         var round = BinaryCodec.BYTE_BUFFER.Read(buf);
 
-        Assert.That(round.Array, Is.EqualTo(original.Array));
+        Assert.That(round.ReadableBytes, Is.EqualTo(original.ReadableBytes));
+
+        Assert.That(round.ReadByte(), Is.EqualTo((byte)'h'));
+        Assert.That(round.ReadByte(), Is.EqualTo((byte)'e'));
+        Assert.That(round.ReadByte(), Is.EqualTo((byte)'l'));
+        Assert.That(round.ReadByte(), Is.EqualTo((byte)'l'));
+        Assert.That(round.ReadByte(), Is.EqualTo((byte)'o'));
+        Assert.That(round.ReadInt(), Is.EqualTo(42));
     }
 
     [Test]
