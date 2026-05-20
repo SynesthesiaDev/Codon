@@ -146,12 +146,7 @@ public static class BinaryCodecs
         public byte[] Read(IByteBuffer buffer)
         {
             var size = BinaryCodec.VAR_INT.Read(buffer);
-            if (size > maxSize)
-                throw new InvalidDataException($"The read byte array is longer than maximum allowed (${size} > {maxSize}");
-
-            var destination = new byte[size];
-            buffer.ReadBytes(destination);
-            return destination;
+            return size > maxSize ? throw new InvalidDataException($"The read byte array is longer than maximum allowed (${size} > {maxSize}") : buffer.ToByteArraySafe(size);
         }
     }
 
@@ -159,17 +154,27 @@ public static class BinaryCodecs
     {
         public void Write(IByteBuffer buffer, IByteBuffer value)
         {
-            if (maxSize != null && value.ReadableBytes > maxSize)
-                throw new ArgumentException($"The byte buffer is longer than maximum allowed ({value.ReadableBytes} > {maxSize})", nameof(value));
+            var size = value.ReadableBytes;
 
-            var array = value.Array;
-            BinaryCodec.VAR_INT.Write(buffer, array.Length);
-            buffer.WriteBytes(array);
+            if (maxSize is not null && size > maxSize.Value)
+            {
+                throw new ArgumentException(
+                    $"The byte buffer is longer than maximum allowed ({size} > {maxSize.Value})",
+                    nameof(value));
+            }
+
+            BinaryCodec.VAR_INT.Write(buffer, size);
+            buffer.WriteBytes(value, value.ReaderIndex, size);
         }
 
         public IByteBuffer Read(IByteBuffer buffer)
         {
             var size = BinaryCodec.VAR_INT.Read(buffer);
+
+            if (size < 0)
+                throw new InvalidDataException($"Size cannot be negative.");
+
+
             if (size > maxSize)
                 throw new InvalidDataException($"The read byte buffer is longer than maximum allowed (${size} > {maxSize}");
 
@@ -181,9 +186,11 @@ public static class BinaryCodecs
     {
         public void Write(IByteBuffer buffer, string value)
         {
-            if (maxStringLength != null && value.Length > maxStringLength)
-                throw new ArgumentException($"String is longer than maximum allowed (${value.Length} > {maxStringLength})", nameof(value));
             var stringBytes = Encoding.UTF8.GetBytes(value);
+
+            if (maxStringLength is not null && stringBytes.Length > maxStringLength.Value)
+                throw new ArgumentException($"String is longer than maximum allowed ({stringBytes.Length} > {maxStringLength.Value})", nameof(value));
+
             BinaryCodec.VAR_INT.Write(buffer, stringBytes.Length);
             buffer.WriteBytes(stringBytes);
         }
@@ -191,12 +198,14 @@ public static class BinaryCodecs
         public string Read(IByteBuffer buffer)
         {
             var size = BinaryCodec.VAR_INT.Read(buffer);
-            if (size < 0) throw new InvalidDataException("The read string has negative length");
-            if (size == 0) return string.Empty;
-            if (size > maxStringLength)
-                throw new InvalidDataException($"Read string is longer than maximum allowed (${size} > {maxStringLength}");
 
-            var stringBytes = buffer.ReadBytes(size).ToByteArraySafe();
+            if (size < 0)
+                throw new InvalidDataException($"The read string has negative length: {size}");
+
+            if (maxStringLength is not null && size > maxStringLength.Value)
+                throw new InvalidDataException($"Read string is longer than maximum allowed ({size} > {maxStringLength.Value})");
+
+            var stringBytes = buffer.ToByteArraySafe(size);
             return Encoding.UTF8.GetString(stringBytes);
         }
     }
@@ -210,7 +219,7 @@ public static class BinaryCodecs
 
         public byte[] Read(IByteBuffer buffer)
         {
-            return buffer.ReadBytes(buffer.Array.Length).ToByteArraySafe();
+            return buffer.ToByteArraySafe();
         }
     }
 
@@ -232,6 +241,7 @@ public static class BinaryCodecs
     {
         public void Write(IByteBuffer buffer, T? value)
         {
+            BinaryCodec.BOOLEAN.Write(buffer, value != null);
             innerCodec.Write(buffer, value ?? defaultValue);
         }
 
@@ -259,6 +269,7 @@ public static class BinaryCodecs
     {
         public void Write(IByteBuffer buffer, Dictionary<K, V> value)
         {
+
             if (maxSize != null && value.Count > maxSize)
                 throw new ArgumentException($"There are more map entries than maximum allowed ({value.Count} > {maxSize})", nameof(value));
 
@@ -274,6 +285,9 @@ public static class BinaryCodecs
         {
             var dict = new Dictionary<K, V>();
             var size = BinaryCodec.VAR_INT.Read(buffer); // how big is my dic(t)...
+
+            if (size < 0)
+                throw new InvalidDataException($"The read dictionary has negative entry count: {size}");
 
             if (maxSize != null && size > maxSize)
                 throw new InvalidDataException($"The read dictionary has more entries than maximum allowed ({size} > {maxSize})");
@@ -304,6 +318,9 @@ public static class BinaryCodecs
         {
             var list = new List<T>();
             var size = BinaryCodec.VAR_INT.Read(buffer);
+
+            if (size < 0)
+                throw new InvalidDataException($"The read list has negative entry count: {size}");
 
             if (size > maxSize)
                 throw new InvalidDataException($"The read list has more entries than maximum allowed ({size} > {maxSize})");
@@ -360,6 +377,14 @@ public static class BinaryCodecs
         public void Write(IByteBuffer buffer, E value)
         {
             var ordinal = Array.IndexOf(entries, value);
+            if (ordinal < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    $"Value is not defined for enum {typeof(E).Name}.");
+            }
+
             BinaryCodec.VAR_INT.Write(buffer, ordinal);
         }
 
