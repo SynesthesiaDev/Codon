@@ -13,13 +13,11 @@ public class VersionCodecTests
 
     public record Person(string Name, int Age, Optional<bool> IsAwesome)
     {
-        public static readonly StructCodec<Person> CODEC = StructCodec.Of
-        (
-            "name", Codecs.STRING, p => p.Name,
-            "age", Codecs.INT, p => p.Age,
-            "is_awesome", Codecs.BOOLEAN.Optional(), p => p.IsAwesome,
-            (name, age, someBoolean) => new Person(name, age, someBoolean)
-        );
+        public static readonly StructCodec<Person> CODEC = StructCodec.For<Person>()
+            .Field("name", Codecs.STRING, p => p.Name)
+            .Field("age", Codecs.INT, p => p.Age)
+            .Field("is_awesome", Codecs.BOOLEAN.Optional(), p => p.IsAwesome)
+            .Build((name, age, someBoolean) => new Person(name, age, someBoolean));
 
         // schema version 0 -> 1: added "age" field
         // schema version 1 -> 2: renamed "display_name" to just "name"
