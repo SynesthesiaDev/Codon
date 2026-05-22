@@ -4,7 +4,6 @@ Codon is a lightweight codec library for .NET
 
 Codon has five packages:
 
-- `Codon.BinaryBuffer` - custom implementation of binary buffer, included in `BinaryCodec` package
 - `Codon.BinaryCodec` - for serialization to binary format
 - `Codon.Codec` - for serialization into any format using transcoders (JSON included)
 - `Codon.Optional` - Optional class as replacement for nullability because nullable generics SUCK in C#
@@ -12,19 +11,17 @@ Codon has five packages:
 
 ## Codecs
 
-Lets define a basic codec for `Person` class:
+Let's define a basic codec for `Person` class:
 (All examples are using `JsonTranscoder` but any transcoder may be used)
 
 ```csharp
-public record Person(string name, int age, bool isAwesome)
+public record Person(string Name, int Age, Optional<bool> IsAwesome)
 {
-    public static readonly StructCodec<Person> Codec = StructCodec.Of
-    (
-        "name", Codecs.String, p => p.name,
-        "age", Codecs.Int, p => p.age,
-        "is_awesome", Codecs.Boolean, p => p.isAwesome,
-        (name, age, isAwesome) => new Person(name, age, isAwesome) 
-    );
+    public static readonly StructCodec<Person> CODEC = StructCodec.For<Person>()
+        .Field("name", Codecs.STRING, p => p.Name)
+        .Field("age", Codecs.INT, p => p.Age)
+        .Field("is_awesome", Codecs.BOOLEAN.Optional(), p => p.IsAwesome)
+        .Build((name, age, isAwesome) => new Person(name, age, isAwesome));
 }
 ```
 
@@ -49,23 +46,21 @@ Console.WriteLine(decoded); // Person { name = Silly Billy, age = 18, isAwesome 
 You can nest codecs by referencing them in another codec. Lets add `PersonalInformation` class to our `Person` class:
 
 ```csharp
-public record PersonalInformation(string address, int height, int weight)
+public record PersonalInformation(string Address, int Height, int Weight)
 {
-    public static readonly StructCodec<PersonalInformation> Codec = StructCodec.Of
-    (
-        "address", Codecs.String, p => p.address,
-        "height", Codecs.Int, p => p.height,
-        "weight", Codecs.Int, p => p.weight,
-        (address, height, weight) => new PersonalInformation(address, height, weight) 
-    );
+    public static readonly StructCodec<PersonalInformation> CODEC = StructCodec.For<PersonalInformation>()
+        .Field("address", Codecs.STRING, p => p.Address)
+        .Field("height", Codecs.INT, p => p.Height)
+        .Field("weight", Codecs.INT, p => p.Weight)
+        .Build((address, height, weight) => new PersonalInformation(address, height, weight));
 }
 ```
 
 Now we can reference it in our `Person` class just like this:
 
 ```csharp
-"personal_information", PersonalInformation.Codec, p => p.personalInformation,
-(name, age, someBoolean, personalInformation) => new Person(name, age, someBoolean, personalInformation)
+.Field("personal_information", PersonalInformation.CODEC, p => p.PersonalInformation),
+.Build((name, age, someBoolean, personalInformation) => new Person(name, age, someBoolean, personalInformation));
 ```
 
 ### Optional and Default fields
@@ -76,11 +71,11 @@ using Codon.Codec.Transcoder.Transcoders;
 
 public record User(string id, Optional<string> displayName, int level) 
 {
-    public static readonly StructCodec<User> Codec = StructCodec.Of(
-        "id", Codecs.String, u => u.id,
-        "display_name", Codecs.String.Optional(), u => u.displayName,
-        "level", Codecs.Int.Default(1), u => u.level,
-        (id, displayName, level) => new User(id, displayName, level)
+    public static readonly StructCodec<User> Codec = StructCodec.For<User>(
+        .Field("id", Codecs.String, u => u.id)
+        .Field("display_name", Codecs.String.Optional(), u => u.displayName)
+        .Field("level", Codecs.Int.Default(1), u => u.level)
+        .Build((id, displayName, level) => new User(id, displayName, level));
     );
 };
 ```
@@ -148,11 +143,10 @@ record Rect(int w, int h) : Shape;
 enum Kind { Rect }
 
 // Base codec for Rect
-var rectCodec = StructCodec.Of(
-    "w", Codecs.Int, r => r.w,
-    "h", Codecs.Int, r => r.h,
-    (w, h) => new Rect(w, h)
-);
+var rectCodec = StructCodec.For<Rect>(
+    .Field("w", Codecs.Int, r => r.w)
+    .Field("h", Codecs.Int, r => r.h)
+    .Build((w, h) => new Rect(w, h));
 
 // Sometimes you may need a small adapter to upcast StructCodec<Rect> to StructCodec<Shape>
 StructCodec<Shape> Upcast(StructCodec<Rect> inner) => new UpcastStructCodec<Shape, Rect>(inner, s => (Rect)s, r => r);
@@ -177,18 +171,18 @@ var encodedShape = shapeCodec.Decode(JsonTranscoder.Instance, encShape);
 ```csharp
 public record Outer(int id, Inner inner) 
 {
-    public static readonly StructCodec<Outer> OuterCodec = StructCodec.Of(
-        "id", Codecs.Int, o => o.id,
-        StructCodec.Inline, InnerCodec, o => o.inner,
-        (id, inner) => new Outer(id, inner)
+    public static readonly StructCodec<Outer> OuterCodec = StructCodec.For<Outer>(
+        .Field("id", Codecs.Int, o => o.id)
+        .Field(StructCodec.Inline, InnerCodec, o => o.inner)
+        .Build((id, inner) => new Outer(id, inner));
     );
 }
 
 public record Inner(string name) 
 {
-    public static readonly StructCodec<Inner> InnerCodec = StructCodec.Of(
-        "name", Codecs.String, i => i.name,
-        name => new Inner(name)
+    public static readonly StructCodec<Inner> InnerCodec = StructCodec.For<Inner>(
+        .Field("name", Codecs.String, i => i.name) 
+        .Build(name => new Inner(name));
     );
     
 }
@@ -224,12 +218,11 @@ private const string old_person_json = "{\"display_name\":\"Synesthesia Dev\", \
 
 public record Person(string Name, int Age, Optional<bool> IsAwesome)
 {
-    private static readonly StructCodec<Person> codec = StructCodec.Of (
-        "name", Codecs.String, p => p.Name,
-        "age", Codecs.Int, p => p.Age,
-        "is_awesome", Codecs.Boolean.Optional(), p => p.IsAwesome,
-        (name, age, someBoolean) => new Person(name, age, someBoolean) 
-    );
+    public static readonly StructCodec<Person> CODEC = StructCodec.For<Person>()
+        .Field("name", Codecs.STRING, p => p.Name)
+        .Field("age", Codecs.INT, p => p.Age)
+        .Field("is_awesome", Codecs.BOOLEAN.Optional(), p => p.IsAwesome)
+        .Build((name, age, isAwesome) => new Person(name, age, isAwesome));
     
     // schema version 1: added "age" field
     // schema version 2: renamed "display_name" to just "name"
@@ -271,7 +264,7 @@ Quick roundtrip with primitives:
 using Codon.Binary;
 using Codon.Buffer;
 
-var buf = new BinaryBuffer();
+var buf = Unpooled.Buffer();
 
 // Write
 BinaryCodec.Int.Write(buf, 42);
@@ -312,12 +305,11 @@ Composite codecs (struct-like) using Of(...):
 ```csharp
 public record Person(string name, int age, bool active)
 {
-    public static readonly IBinaryCodec<Person> Codec = BinaryCodec.Of(
-        BinaryCodec.String, p => p.name,
-        BinaryCodec.Int, p => p.age,
-        BinaryCodec.Boolean, p => p.active,
-        (name, age, active) => new Person(name, age, active)
-    );
+    public static readonly IBinaryCodec<Person> Codec = BinaryCodec.For<Person>(
+        .Field(BinaryCodec.String, p => p.name)
+        .Field(BinaryCodec.Int, p => p.age)
+        .Field(BinaryCodec.Boolean, p => p.active)
+        .Build((name, age, active) => new Person(name, age, active));
 }
 
 Person.Codec.Write(buffer, new Person("Alice", 30, true));
@@ -343,10 +335,10 @@ Recursive structures are supported via `BinaryCodec.Recursive(self => ...)`:
 public record Node(string name, List<Node> children)
 {
     public static readonly IBinaryCodec<Node> Codec = BinaryCodec.Recursive<Node>(self =>
-        BinaryCodec.Of(
-            BinaryCodec.String, n => n.name,
-            self.List(),        n => n.children,
-            (name, children) => new Node(name, children)
+        BinaryCodec.For<Node>(
+            .Field(BinaryCodec.String, n => n.name)
+            .Field(self.List(),        n => n.children)
+            .Build((name, children) => new Node(name, children))
         )
     );
 }
