@@ -74,13 +74,13 @@ public class ListMapEnumAndMoreCodecTests
     }
 
     private abstract record Shape;
+
     private record Rect(int W, int H) : Shape;
 
-    private static readonly StructCodec<Rect> rect_codec = StructCodec.Of(
-        "w", Codecs.INT, r => r.W,
-        "h", Codecs.INT, r => r.H,
-        (w, h) => new Rect(w, h)
-    );
+    private static readonly StructCodec<Rect> rect_codec = StructCodec.For<Rect>()
+        .Field("w", Codecs.INT, r => r.W)
+        .Field("h", Codecs.INT, r => r.H)
+        .Build((w, h) => new Rect(w, h));
 
     private enum Kind { Rect }
 
@@ -148,12 +148,11 @@ public class ListMapEnumAndMoreCodecTests
 
     private record Nested(string Name, List<int> Nums, Dictionary<string, int> Map);
 
-    private static readonly StructCodec<Nested> nested_codec = StructCodec.Of(
-        "name", Codecs.STRING, n => n.Name,
-        "nums", Codecs.INT.List(), n => n.Nums,
-        "map", Codecs.STRING.MapTo(Codecs.INT), n => n.Map,
-        (name, nums, map) => new Nested(name, nums, map)
-    );
+    private static readonly StructCodec<Nested> nested_codec = StructCodec.For<Nested>()
+        .Field("name", Codecs.STRING, n => n.Name)
+        .Field("nums", Codecs.INT.List(), n => n.Nums)
+        .Field("map", Codecs.STRING.MapTo(Codecs.INT), n => n.Map)
+        .Build((name, nums, map) => new Nested(name, nums, map));
 
     [Test]
     public void Nested_StructCodec_RoundTrip()

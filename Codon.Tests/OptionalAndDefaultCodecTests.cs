@@ -22,28 +22,26 @@ public class OptionalAndDefaultCodecTests
 
     private record OptHolder(int Id, Optional<int> Oi)
     {
-        public static readonly StructCodec<OptHolder> CODEC = StructCodec.Of(
-            "id", Codecs.INT, h => h.Id,
-            "oi", Codecs.INT.Optional(), h => h.Oi,
-            (id, oi) => new OptHolder(id, oi)
-        );
+        public static readonly StructCodec<OptHolder> CODEC = StructCodec.For<OptHolder>()
+            .Field("id", Codecs.INT, h => h.Id)
+            .Field("oi", Codecs.INT.Optional(), h => h.Oi)
+            .Build((id, oi) => new OptHolder(id, oi));
     }
 
     [Test]
     public void Optional_Missing_Field_IsEmpty()
     {
-        var json = JsonDocument.Parse("{\"id\": 1}" ).RootElement;
+        var json = JsonDocument.Parse("{\"id\": 1}").RootElement;
         var decoded = OptHolder.CODEC.Decode(t, json);
         Assert.That(decoded.Oi.IsMissing, Is.True);
     }
 
     private record DefHolder(int Id, int X)
     {
-        public static readonly StructCodec<DefHolder> CODEC = StructCodec.Of(
-            "id", Codecs.INT, h => h.Id,
-            "x", Codecs.INT.Default(5), h => h.X,
-            (id, x) => new DefHolder(id, x)
-        );
+        public static readonly StructCodec<DefHolder> CODEC = StructCodec.For<DefHolder>()
+            .Field("id", Codecs.INT, h => h.Id)
+            .Field("x", Codecs.INT.Default(5), h => h.X)
+            .Build((id, x) => new DefHolder(id, x));
     }
 
     [Test]

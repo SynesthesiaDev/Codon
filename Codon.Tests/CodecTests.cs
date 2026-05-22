@@ -11,24 +11,20 @@ public class CodecTests
 
     public record Person(string Name, int Age, Optional<bool> IsAwesome)
     {
-        public static readonly Codec<Person> CODEC = StructCodec.Of
-        (
-            "name", Codecs.STRING, p => p.Name,
-            "age", Codecs.INT, p => p.Age,
-            "is_awesome", Codecs.BOOLEAN.Optional(), p => p.IsAwesome,
-            (name, age, someBoolean) => new Person(name, age, someBoolean)
-        );
+        public static readonly StructCodec<Person> CODEC = StructCodec.For<Person>()
+            .Field("name", Codecs.STRING, p => p.Name)
+            .Field("age", Codecs.INT, p => p.Age)
+            .Field("is_awesome", Codecs.BOOLEAN.Optional(), p => p.IsAwesome)
+            .Build((name, age, isAwesome) => new Person(name, age, isAwesome));
     }
 
     public record Car(string Model, List<Person> Passengers, Optional<Person> Driver)
     {
-        public static readonly StructCodec<Car> CODEC = StructCodec.Of
-        (
-            "model", Codecs.STRING, c => c.Model,
-            "passengers", Person.CODEC.List(), c => c.Passengers,
-            "driver", Person.CODEC.Optional(), c => c.Driver,
-            (model, passengers, driver) => new Car(model, passengers, driver)
-        );
+        public static readonly StructCodec<Car> CODEC = StructCodec.For<Car>()
+            .Field("model", Codecs.STRING, c => c.Model)
+            .Field("passengers", Person.CODEC.List(), c => c.Passengers)
+            .Field("driver", Person.CODEC.Optional(), c => c.Driver)
+            .Build((model, passengers, driver) => new Car(model, passengers, driver));
     }
 
     [Test]

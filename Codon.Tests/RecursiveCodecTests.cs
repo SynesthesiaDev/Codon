@@ -8,12 +8,10 @@ public class RecursiveCodecTests
     public record Node(string Name, List<Node> Children)
     {
         public static readonly Codec<Node> CODEC = Codecs.Recursive<Node>(self =>
-            StructCodec.Of(
-                "name", Codecs.STRING, n => n.Name,
-                "children", self.List(), n => n.Children,
-                (name, children) => new Node(name, children)
-            )
-        );
+            StructCodec.For<Node>()
+                .Field("name", Codecs.STRING, n => n.Name)
+                .Field("children", self.List(), n => n.Children)
+                .Build((name, children) => new Node(name, children)));
     }
 
     [Test]
