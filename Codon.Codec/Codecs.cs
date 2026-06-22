@@ -1,4 +1,4 @@
-using Codon.Codec.Transcoder;
+ using Codon.Codec.Transcoder;
 using Codon.Optionals;
 
 namespace Codon.Codec;

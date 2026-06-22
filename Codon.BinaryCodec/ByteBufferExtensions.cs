@@ -28,4 +28,20 @@ public static class ByteBufferExtensions
         var size = Math.Max(0, buffer.ReadableBytes);
         return buffer.ToByteArraySafe(size);
     }
+
+    public static IByteBuffer WriteUnsignedInt(this IByteBuffer buffer, uint value)
+    {
+        unchecked
+        {
+            return buffer.WriteInt((int)value);
+        }
+    }
+
+    public static IByteBuffer WriteUnsignedIntLE(this IByteBuffer buffer,uint value)
+    {
+        unchecked
+        {
+            return buffer.WriteIntLE((int)value);
+        }
+    }
 }

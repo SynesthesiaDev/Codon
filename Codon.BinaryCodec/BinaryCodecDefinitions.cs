@@ -12,6 +12,33 @@ namespace Codon.Binary;
 
 public static class BinaryCodecDefinitions
 {
+
+    public class ShortBinaryCodec : IBinaryCodec<short>
+    {
+        public void Write(IByteBuffer buffer, short value)
+        {
+            buffer.WriteShort(value);
+        }
+
+        public short Read(IByteBuffer buffer)
+        {
+            return buffer.ReadShort();
+        }
+    }
+
+    public class UIntBinaryCodec : IBinaryCodec<uint>
+    {
+        public void Write(IByteBuffer buffer, uint value)
+        {
+            buffer.WriteUnsignedInt(value);
+        }
+
+        public uint Read(IByteBuffer buffer)
+        {
+            return buffer.ReadUnsignedInt();
+        }
+    }
+
     public class BooleanBinaryCodec : IBinaryCodec<bool>
     {
         public void Write(IByteBuffer buffer, bool value)

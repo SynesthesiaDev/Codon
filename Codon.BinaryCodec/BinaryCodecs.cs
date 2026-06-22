@@ -17,7 +17,11 @@ public static class BinaryCodecs
 
     public static readonly IBinaryCodec<int> INT = new BinaryCodecDefinitions.IntBinaryCodec();
 
+    public static readonly IBinaryCodec<uint> UINT = new BinaryCodecDefinitions.UIntBinaryCodec();
+
     public static readonly IBinaryCodec<long> LONG = new BinaryCodecDefinitions.LongBinaryCodec();
+
+    public static readonly IBinaryCodec<short> SHORT = new BinaryCodecDefinitions.ShortBinaryCodec();
 
     public static readonly IBinaryCodec<double> DOUBLE = new BinaryCodecDefinitions.DoubleBinaryCodec();
 
