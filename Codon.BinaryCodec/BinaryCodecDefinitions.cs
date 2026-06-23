@@ -12,6 +12,11 @@ namespace Codon.Binary;
 
 public static class BinaryCodecDefinitions
 {
+    public class CustomBinaryCodec<T>(Action<IByteBuffer, T> encode, Func<IByteBuffer, T> decode) : IBinaryCodec<T>
+    {
+        public void Write(IByteBuffer buffer, T value) => encode.Invoke(buffer, value);
+        public T Read(IByteBuffer buffer) => decode.Invoke(buffer);
+    }
 
     public class ShortBinaryCodec : IBinaryCodec<short>
     {

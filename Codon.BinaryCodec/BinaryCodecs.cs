@@ -54,6 +54,18 @@ public static class BinaryCodecs
     public static IBinaryCodec<R> Empty<R>(Func<R> func) => new BinaryCodecDefinitions.BinaryCodecEmpty<R>(func);
 
     public static BinaryCodecBuilder<T> For<T>() => new();
+
+    public static IBinaryCodec<T> Custom<T>(Action<IByteBuffer, T> encode, Func<IByteBuffer, T> decode) => new BinaryCodecDefinitions.CustomBinaryCodec<T>(encode, decode);
+
+    public static IBinaryCodec<TBase> Cast<TBase, TDerived>(this IBinaryCodec<TDerived> codec)
+        where TDerived : class, TBase
+    {
+        return new BinaryCodecDefinitions.BinaryCodecP1<TDerived, TBase>(
+            codec,
+            baseVal => (TDerived)baseVal!,
+            derivedVal => (TBase)derivedVal
+        );
+    }
 }
 
 public interface IBinaryCodec<T>
