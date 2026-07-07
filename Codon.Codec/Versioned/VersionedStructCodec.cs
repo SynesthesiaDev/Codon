@@ -3,7 +3,7 @@ using Codon.Codec.Transcoder;
 namespace Codon.Codec.Versioned;
 
 
-public sealed class VersionedStructCodec<R>
+public sealed class VersionedStructCodec<R> : Codec<R> where R : notnull
 {
     private const string schema_version_key = "_schemaVersion";
 
@@ -14,7 +14,7 @@ public sealed class VersionedStructCodec<R>
     public required SchemaMigrationRegistry SchemaMigrationRegistry { get; init; }
 
     // Apply any data migrations before actually decoding
-    public R Decode<D>(ITranscoder<D> transcoder, D value)
+    public override R Decode<D>(ITranscoder<D> transcoder, D value)
     {
         var map = transcoder.DecodeMap(value);
         var schemaVersion = map.HasValue(schema_version_key) ? transcoder.DecodeInt(map.GetValue(schema_version_key)) : 0;
@@ -44,7 +44,7 @@ public sealed class VersionedStructCodec<R>
         return InnerCodec.DecodeFromMap(transcoder, map);
     }
 
-    public D Encode<D>(ITranscoder<D> transcoder, R value)
+    public override D Encode<D>(ITranscoder<D> transcoder, R value)
     {
         var mapBuilder = transcoder.EncodeMap();
         mapBuilder.Put(schema_version_key, transcoder.EncodeInt(CurrentSchemaVersion));
