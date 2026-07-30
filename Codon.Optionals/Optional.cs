@@ -56,5 +56,5 @@ public class Optional<T>
 public static class Optional
 {
     public static Optional<T> Empty<T>() => new();
-    public static Optional<T> Of<T>(T value) => new(value);
+    public static Optional<T?> Of<T>(T? value) => new(value);
 }

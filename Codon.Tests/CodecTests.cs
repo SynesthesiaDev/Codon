@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Codon.Codec;
 using Codon.Codec.Json;
 using Codon.Optionals;
@@ -44,7 +43,7 @@ public class CodecTests
     [Test]
     public void TestDecodeFromString()
     {
-        var decoded = Person.CODEC.Decode(JsonTranscoder.INSTANCE, JsonDocument.Parse(jeson).RootElement);
+        var decoded = Person.CODEC.Decode(JsonTranscoder.INSTANCE, jeson.ToJson());
         Assert.That(decoded.Name, Is.EqualTo("Synesthesia Dev"));
         Assert.That(decoded.Age, Is.EqualTo(20));
         Assert.That(Optional.Empty<bool>(), Is.EqualTo(decoded.IsAwesome));

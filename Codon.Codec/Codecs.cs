@@ -1,4 +1,4 @@
- using Codon.Codec.Transcoder;
+using Codon.Codec.Transcoder;
 using Codon.Optionals;
 
 namespace Codon.Codec;
@@ -70,6 +70,8 @@ public static class Codecs
         (transcoder, b) => transcoder.EncodeLongArray(b),
         (transcoder, o) => transcoder.DecodeLongArray(o)
     );
+
+    public static readonly Codec<Guid> GUID = STRING.Transform(Guid.Parse, guid => guid.ToString());
 
     public static Codec<E> Enum<E>() where E : Enum
     {

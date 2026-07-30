@@ -42,14 +42,12 @@ public class VersionCodecTests
         };
     }
 
-    private static JsonElement parseJson(string json) => JsonDocument.Parse(json).RootElement;
-
     [Test]
     public void Decode_V0_NoSchemaVersionField_AppliesAllMigrations_AndDecodes()
     {
 
         // no _schemaVersion, also uses "display_name" (pre-v2)
-        var v0 = parseJson("{\"display_name\":\"Synesthesia Dev\", \"is_awesome\":true}");
+        var v0 = "{\"display_name\":\"Synesthesia Dev\", \"is_awesome\":true}".ToJson();
 
         var decoded = Person.VERSIONED_CODEC.Decode(JsonTranscoder.INSTANCE, v0);
 
@@ -63,7 +61,7 @@ public class VersionCodecTests
     public void Decode_V1_WithSchemaVersion_AppliesRemainingMigrationsOnly()
     {
         // v1 has _schemaVersion=1 and already has age, but still uses display_name
-        var v1 = parseJson("{\"_schemaVersion\":1, \"display_name\":\"Ada\", \"age\":42, \"is_awesome\":false}");
+        var v1 = "{\"_schemaVersion\":1, \"display_name\":\"Ada\", \"age\":42, \"is_awesome\":false}".ToJson();
 
         var decoded = Person.VERSIONED_CODEC.Decode(JsonTranscoder.INSTANCE, v1);
 
@@ -77,7 +75,7 @@ public class VersionCodecTests
     public void Decode_AlreadyCurrentSchema_DoesNotRequireMigrations_AndIgnoresUnknownFields()
     {
         // name + age and includes extra field that should be ignored by StructCodec
-        var v2 = parseJson("{\"_schemaVersion\":2, \"name\":\"Grace\", \"age\":99, \"is_awesome\":true, \"extra\":\"ignored\"}");
+        var v2 = "{\"_schemaVersion\":2, \"name\":\"Grace\", \"age\":99, \"is_awesome\":true, \"extra\":\"ignored\"}".ToJson();
 
         var decoded = Person.VERSIONED_CODEC.Decode(JsonTranscoder.INSTANCE, v2);
 
@@ -91,7 +89,7 @@ public class VersionCodecTests
     public void Decode_MissingRequiredFieldDuringMigration_Throws()
     {
         // v1 -> v2 migration expects display_name. If it's missing, migration should fail.
-        var v1MissingDisplayName = parseJson("{\"_schemaVersion\":1, \"age\":5, \"is_awesome\":true}");
+        var v1MissingDisplayName = "{\"_schemaVersion\":1, \"age\":5, \"is_awesome\":true}".ToJson();
 
         Assert.Throws<KeyNotFoundException>(() => Person.VERSIONED_CODEC.Decode(JsonTranscoder.INSTANCE, v1MissingDisplayName));
     }
@@ -111,7 +109,7 @@ public class VersionCodecTests
                 })
         };
 
-        var v0 = parseJson("{\"display_name\":\"X\", \"is_awesome\":true}");
+        var v0 = "{\"display_name\":\"X\", \"is_awesome\":true}".ToJson();
 
         Assert.Throws<KeyNotFoundException>(() => versioned.Decode(JsonTranscoder.INSTANCE, v0));
     }
@@ -134,7 +132,7 @@ public class VersionCodecTests
     [Test]
     public void RoundTrip()
     {
-        var decoded = Person.VERSIONED_CODEC.Decode(JsonTranscoder.INSTANCE, JsonDocument.Parse(jeson).RootElement);
+        var decoded = Person.VERSIONED_CODEC.Decode(JsonTranscoder.INSTANCE, jeson.ToJson());
         Assert.That(decoded.Name, Is.EqualTo("Synesthesia Dev"));
         Assert.That(decoded.Age, Is.EqualTo(0));
 
@@ -147,6 +145,6 @@ public class VersionCodecTests
     [Test]
     public void Decode_FutureSchemaVersion()
     {
-        Assert.Throws<InvalidOperationException>(() => Person.VERSIONED_CODEC.Decode(JsonTranscoder.INSTANCE, JsonDocument.Parse(json_newer).RootElement));
+        Assert.Throws<InvalidOperationException>(() => Person.VERSIONED_CODEC.Decode(JsonTranscoder.INSTANCE, json_newer.ToJson()));
     }
 }

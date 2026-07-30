@@ -86,7 +86,7 @@ Missing optional field decodes to `Optional.Empty`
 generics properly)
 
 ```csharp
-var json = JsonDocument.Parse("{\"id\":\"u1\"}").RootElement;
+var json = "{\"id\":\"u1\"}".ToJson();
 var decodedUser = User.Codec.Decode(JsonTranscoder.Instance, json);
 Console.WriteLine(decodedUser) // User { id = "u1", displayName = null, level = 1 }
 ```

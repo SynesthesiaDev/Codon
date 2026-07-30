@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Codon.Codec;
 using Codon.Codec.Json;
 using Codon.Optionals;
@@ -31,7 +30,7 @@ public class OptionalAndDefaultCodecTests
     [Test]
     public void Optional_Missing_Field_IsEmpty()
     {
-        var json = JsonDocument.Parse("{\"id\": 1}").RootElement;
+        var json = "{\"id\": 1}".ToJson();
         var decoded = OptHolder.CODEC.Decode(t, json);
         Assert.That(decoded.Oi.IsMissing, Is.True);
     }
@@ -47,7 +46,7 @@ public class OptionalAndDefaultCodecTests
     [Test]
     public void Default_Missing_Field_UsesDefault()
     {
-        var json = JsonDocument.Parse("{\"id\": 7}").RootElement;
+        var json = "{\"id\": 7}".ToJson();
         var decoded = DefHolder.CODEC.Decode(t, json);
         Assert.That(decoded.X, Is.EqualTo(5));
     }
@@ -55,7 +54,7 @@ public class OptionalAndDefaultCodecTests
     [Test]
     public void Default_Present_Field_OverridesDefault()
     {
-        var json = JsonDocument.Parse("{\"id\": 9, \"x\":123}").RootElement;
+        var json = "{\"id\": 9, \"x\":123}".ToJson();
         var decoded = DefHolder.CODEC.Decode(t, json);
         Assert.That(decoded.X, Is.EqualTo(123));
     }
