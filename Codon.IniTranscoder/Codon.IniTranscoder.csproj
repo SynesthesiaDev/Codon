@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Description>A Codon transcoder for INI format</Description>
         <RepositoryUrl>https://github.com/SynesthesiaDev/Codon</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="SynesthesiaUtils" Version="1.2.0" />
+      <PackageReference Include="SynesthesiaUtils" Version="2026.804.0" />
     </ItemGroup>
 
 </Project>

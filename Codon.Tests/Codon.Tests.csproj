@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
@@ -15,7 +15,8 @@
         <PackageReference Include="NUnit" Version="3.14.0"/>
         <PackageReference Include="NUnit.Analyzers" Version="3.9.0"/>
         <PackageReference Include="NUnit3TestAdapter" Version="4.5.0"/>
-        <PackageReference Include="SynesthesiaUtils" Version="1.2.0" />
+        <PackageReference Include="SynesthesiaDev.Synx.Codon" Version="2026.804.0" />
+        <PackageReference Include="SynesthesiaUtils" Version="2026.804.0" />
     </ItemGroup>
 
     <ItemGroup>

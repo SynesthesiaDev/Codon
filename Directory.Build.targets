@@ -3,6 +3,7 @@
     <Authors>SynesthesiaDev</Authors>
     <RepositoryUrl>https://github.com/SynesthesiaDev/Codon</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <TargetFramework>net10.0</TargetFramework>
 
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>

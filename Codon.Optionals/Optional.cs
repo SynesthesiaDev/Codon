@@ -1,22 +1,18 @@
 namespace Codon.Optionals;
 
-public class Optional<T>
+public class Optional<T>(bool isPresent, T? value)
 {
-    public readonly T? Value;
+    public T? Value => IsPresent ? value : default;
 
-    public readonly bool IsPresent;
+    public readonly bool IsPresent = isPresent;
     public bool IsMissing => !IsPresent;
 
-    public Optional()
+    public Optional() : this(false, default)
     {
-        IsPresent = false;
-        Value = default;
     }
 
-    public Optional(T? value)
+    public Optional(T? value) : this(value != null, value)
     {
-        IsPresent = value != null;
-        Value = value;
     }
 
     public T GetOrElse(T defaultValue)
@@ -55,6 +51,8 @@ public class Optional<T>
 
 public static class Optional
 {
-    public static Optional<T> Empty<T>() => new();
+    public static Optional<T> Empty<T>() => new(false, default);
     public static Optional<T?> Of<T>(T? value) => new(value);
+    public static Optional<T> From<T>(T value) => new(true, value);
+
 }

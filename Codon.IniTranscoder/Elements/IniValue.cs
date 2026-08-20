@@ -1,5 +1,5 @@
 using Codon.IniTranscoder.Exceptions;
-using SynesthesiaUtil.Extensions;
+using Synesthesia.Utils.Extensions;
 
 namespace Codon.IniTranscoder.Elements;
 

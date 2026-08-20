@@ -1,26 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <Authors>SynesthesiaDev_</Authors>
-        <Description>A .NET Codec library that can serialize into any format via custom transcoders</Description>
-        <RepositoryUrl>https://github.com/SynesthesiaDev/Codon</RepositoryUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <IsPackable>true</IsPackable>
-        <PackageId>SynesthesiaDev.Codon.Codec</PackageId>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>1.0.1</Version>
-        
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <Authors>SynesthesiaDev_</Authors>
+    <Description>A .NET Codec library that can serialize into any format via custom transcoders</Description>
+    <RepositoryUrl>https://github.com/SynesthesiaDev/Codon</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IsPackable>true</IsPackable>
+    <PackageId>SynesthesiaDev.Codon.Codec</PackageId>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Codon.Optionals\Codon.Optionals.csproj" />
-    </ItemGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="SynesthesiaUtils" Version="1.2.0" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Codon.Optionals\Codon.Optionals.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SynesthesiaUtils" Version="2026.804.0" />
+  </ItemGroup>
 
 </Project>

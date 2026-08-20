@@ -9,8 +9,8 @@
         <PackageId>SynesthesiaDev.Codon.BinaryCodec</PackageId>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Version>1.0.1</Version>
-        
-        <TargetFramework>net8.0</TargetFramework>
+
+        <TargetFramework>net10.0</TargetFramework>
         <LangVersion>12</LangVersion>
         <Nullable>enable</Nullable>
         <RootNamespace>Codon.Binary</RootNamespace>
@@ -22,7 +22,7 @@
 
     <ItemGroup>
       <PackageReference Include="DotNetty.Buffers" Version="0.7.6" />
-      <PackageReference Include="SynesthesiaUtils" Version="1.2.0" />
+      <PackageReference Include="SynesthesiaUtils" Version="2026.804.0" />
     </ItemGroup>
 
 </Project>

@@ -8,8 +8,8 @@
         <IsPackable>true</IsPackable>
         <PackageId>SynesthesiaDev.Codon.Codon</PackageId>
         <Version>1.0.1</Version>
-        
-        <TargetFramework>net8.0</TargetFramework>
+
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Codon.Codon</RootNamespace>
@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="SynesthesiaUtils" Version="1.2.0" />
+      <PackageReference Include="SynesthesiaUtils" Version="2026.804.0" />
     </ItemGroup>
 
 </Project>

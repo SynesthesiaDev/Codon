@@ -112,11 +112,9 @@ public static class Codecs
             {
                 var nullValue = transcoder.EncodeNull();
 
-                if (EqualityComparer<D>.Default.Equals(value, nullValue))
-                    return Optionals.Optional.Empty<T>();
-
-                var decoded = Inner.Decode(transcoder, value);
-                return new Optional<T>(decoded);
+                return EqualityComparer<D>.Default.Equals(value, nullValue)
+                    ? Optionals.Optional.Empty<T>()
+                    : Optionals.Optional.From(Inner.Decode(transcoder, value));
             }
             catch (Exception)
             {

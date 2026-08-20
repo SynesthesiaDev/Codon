@@ -1,41 +1,41 @@
 using System.Collections;
 using Codon.IniTranscoder.Util;
-using SynesthesiaUtil.Extensions;
+using Synesthesia.Utils.Extensions;
 
 namespace Codon.IniTranscoder.Elements;
 
 public class IniList : IIniElement, IEnumerable<IniValue>
 {
-    private List<IniValue> _values = [];
+    private readonly List<IniValue> values = [];
 
-    public int Count => _values.Count;
+    public int Count => values.Count;
 
-    public int Capacity => _values.Capacity;
+    public int Capacity => values.Capacity;
 
-    public void Add(IniValue value) => _values.Add(value);
+    public void Add(IniValue value) => values.Add(value);
 
-    public void Add(string value) => _values.Add(new IniValue(value));
+    public void Add(string value) => values.Add(new IniValue(value));
 
-    public void Remove(IniValue value) => _values.Remove(value);
+    public void Remove(IniValue value) => values.Remove(value);
 
-    public IniValue Get(int index) => _values[0];
+    public IniValue Get(int index) => values[0];
 
-    public IniValue? GetOrNull(int index) => _values.GetOrNull(index);
+    public IniValue? GetOrNull(int index) => values.GetOrNull(index);
 
-    public IEnumerator<IniValue> GetEnumerator() => _values.GetEnumerator();
+    public IEnumerator<IniValue> GetEnumerator() => values.GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator() => _values.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => values.GetEnumerator();
 
-    public List<IniValue> ToList() => _values.ToList();
+    public List<IniValue> ToList() => values.ToList();
 
-    public List<IIniElement> ToListRaw() => (_values.ToArray() as IIniElement[]).ToList();
+    public List<IIniElement> ToListRaw() => (values.ToArray() as IIniElement[]).ToList();
 
     public override string ToString()
     {
         var stringBuilder = "[";
 
         var index = 0;
-        foreach (var value in _values)
+        foreach (var value in values)
         {
             var isLast = index == Count - 1;
             var append = isLast ? string.Empty : ", ";

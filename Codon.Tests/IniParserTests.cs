@@ -1,7 +1,7 @@
 using Codon.Codec;
 using Codon.IniTranscoder.Elements;
 using Codon.IniTranscoder.Util;
-using SynesthesiaUtil.Extensions;
+using Synesthesia.Utils.Extensions;
 
 namespace Codon.Tests;
 
