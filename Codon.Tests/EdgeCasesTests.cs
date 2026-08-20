@@ -3,7 +3,6 @@
 
 using Codon.Codec;
 using Codon.IniTranscoder.Elements;
-using SynesthesiaDev.Synx;
 using SynesthesiaDev.Synx.Codon;
 
 namespace Codon.Tests;
