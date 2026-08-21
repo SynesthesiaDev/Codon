@@ -144,7 +144,7 @@ public class BinaryCodecsTests
     {
         var optionalInt = BinaryCodecs.INT.Optional();
 
-        var some = Optional.Of(123);
+        var some = Optional.Of<int>(123);
         var bufSome = Unpooled.Buffer();
         optionalInt.Write(bufSome, some);
         var readSome = optionalInt.Read(bufSome);
@@ -192,7 +192,7 @@ public class BinaryCodecsTests
     [Test]
     public void List_And_Dictionary_Codecs_RoundTrip()
     {
-        BinaryCodecDefinitions.ListBinaryCodec<string> listCodec = BinaryCodecs.STRING.List();
+        var listCodec = BinaryCodecs.STRING.List();
 
         var list = new List<string> { "a", "b", "c" };
         Assert.That(roundTrip(listCodec, list), Is.EqualTo(list));

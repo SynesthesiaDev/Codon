@@ -114,7 +114,7 @@ public static class Codecs
 
                 return EqualityComparer<D>.Default.Equals(value, nullValue)
                     ? Optionals.Optional.Empty<T>()
-                    : Optionals.Optional.From(Inner.Decode(transcoder, value));
+                    : Optionals.Optional.Of<T>(Inner.Decode(transcoder, value));
             }
             catch (Exception)
             {

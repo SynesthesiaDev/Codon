@@ -117,7 +117,7 @@ public class VersionCodecTests
     [Test]
     public void Encode_AlwaysAddsSchemaVersion_AndRoundTripsWithDecode()
     {
-        var original = new Person("Synesthesia Dev", 123, Optional.Of(true));
+        var original = new Person("Synesthesia Dev", 123, Optional.Of<bool>(true));
 
         var encoded = Person.VERSIONED_CODEC.Encode(JsonTranscoder.INSTANCE, original);
 

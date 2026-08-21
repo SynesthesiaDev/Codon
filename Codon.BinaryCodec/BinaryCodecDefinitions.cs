@@ -267,7 +267,7 @@ public static class BinaryCodecDefinitions
 
         public Optional<T> Read(IByteBuffer buffer)
         {
-            return BinaryCodecs.BOOLEAN.Read(buffer) ? Optional.Of(innerCodec.Read(buffer)) : Optional.Empty<T>();
+            return BinaryCodecs.BOOLEAN.Read(buffer) ? Optional.Of<T>(innerCodec.Read(buffer)) : Optional.Empty<T>();
         }
     }
 

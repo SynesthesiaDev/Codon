@@ -29,7 +29,7 @@ public class CodecTests
     [Test]
     public void TestCodec()
     {
-        var person = new Person("Silly Billy", 18, Optional.Of(true));
+        var person = new Person("Silly Billy", 18, Optional.Of<bool>(true));
         var encoded = Person.CODEC.Encode(JsonTranscoder.INSTANCE, person);
 
         Console.WriteLine(encoded.GetRawText()); // {"name":"Silly Billy","age":18,"is_awesome":true}

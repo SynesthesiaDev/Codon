@@ -52,3 +52,7 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+Codon.Plugin/.gradle
+Codon.Plugin/.intellijPlatform
+Codon.Plugin/build
+Codon.Plugin/protocol/build
