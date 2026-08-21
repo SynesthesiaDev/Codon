@@ -9,7 +9,7 @@ namespace Rider.Plugins.CodonPlugin;
 
 public static class CodedBuilder
 {
-    public static string For(string csharpType, bool binary, bool isEnum = false)
+public static string For(string csharpType, bool binary, bool isEnum = false)
     {
         var trimmed = csharpType.Trim();
         var nullable = trimmed.EndsWith('?');
@@ -30,12 +30,12 @@ public static class CodedBuilder
                 "byte" => $"{prefix}.BYTE_ARRAY",
                 "int" => $"{prefix}.INT_ARRAY",
                 "long" => $"{prefix}.LONG_ARRAY",
-                _ => $"{For(elementType, binary)}.List()"
+                _ => $"{For(elementType, binary, isEnum)}.List()"
             };
         }
         else if (TryParseGeneric(baseType, "List", out var listArg) || TryParseGeneric(baseType, "IList", out listArg))
         {
-            field = $"{For(listArg, binary)}.List()";
+            field = $"{For(listArg, binary, isEnum)}.List()";
         }
         else if (TryParseGenericPair(baseType, out var keyArg, out var valArg))
         {
@@ -82,7 +82,17 @@ public static class CodedBuilder
         }
 
         var ctorParams = string.Join(", ", members.Select(m => m.Name.ToLowerInvariant()));
-        var ctorArgs = string.Join(", ", members.Select(m => m.Nullable ? $"{m.Name.ToLowerInvariant()}.Value" : m.Name.ToLowerInvariant()));
+        var ctorArgs = string.Join(", ", members.Select(m =>
+        {
+            var mname = m.Name.ToLowerInvariant();
+            var isStruct = m.IsEnum || isKnownStructType(m.Type);
+
+            if (!m.Nullable)
+                return mname;
+
+
+            return isStruct ? $"{mname}.ToNullableStruct()" : $"{mname}.ToNullableClass()";
+        }));
         sb.AppendLine($"    .Build(({ctorParams}) =>");
         sb.AppendLine($"        new {className}({ctorArgs}));");
 
@@ -146,5 +156,32 @@ public static class CodedBuilder
         }
 
         return false;
+    }
+
+    private static bool isKnownStructType(string typeName)
+    {
+        var baseType = typeName.TrimEnd('?').Trim();
+
+        return baseType switch
+        {
+            "bool" => true,
+            "byte" => true,
+            "sbyte" => true,
+            "char" => true,
+            "decimal" => true,
+            "double" => true,
+            "float" => true,
+            "int" => true,
+            "uint" => true,
+            "long" => true,
+            "ulong" => true,
+            "short" => true,
+            "ushort" => true,
+            "Guid" => true,
+            "DateTime" => true,
+            "TimeSpan" => true,
+            "DateTimeOffset" => true,
+            _ => false
+        };
     }
 }

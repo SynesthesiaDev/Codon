@@ -81,9 +81,13 @@ public class GenerateCodecsAction(ICSharpContextActionDataProvider provider) : C
         foreach (var p in primaryCtor.Params.ParameterDeclarations)
         {
             var name = p.NameIdentifier!.Name;
-            var isEnum = p.Type.IsEnumType();
+
+            var underlyingType = p.Type.GetNullableUnderlyingType() ?? p.Type;
+            var isEnum = underlyingType.IsEnumType();
+
             var isNullable = p.Type.IsNullable();
             var typeText = p.Type.GetPresentableName(CSharpLanguage.Instance!);
+
             result.Add((name, typeText, isNullable, isEnum));
         }
 
