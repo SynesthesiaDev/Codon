@@ -16,15 +16,15 @@ public static class Extensions
     public static Optional<T> ToOptional<T>(this T? nullable) where T : struct
     {
         return nullable.HasValue
-            ? new Optional<T>(nullable.Value)
-            : new Optional<T>();
+            ? Optional.Of<T>(nullable.Value)
+            : Optional.Empty<T>();
     }
 
     public static Optional<T> ToOptional<T>(this T? obj) where T : class
     {
         return obj is not null
-            ? new Optional<T>(obj)
-            : new Optional<T>();
+            ? Optional.Of<T>(obj)
+            : Optional.Empty<T>();
     }
 
     public static JsonElement ToJson(this string text) => JsonDocument.Parse(text).RootElement;
