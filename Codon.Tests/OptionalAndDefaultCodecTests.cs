@@ -12,7 +12,7 @@ public class OptionalAndDefaultCodecTests
     public void Optional_Present_RoundTrip()
     {
         var codec = Codecs.INT.Optional();
-        var value = Optional.Of(42);
+        var value = Optional.Of<int>(42);
         var encoded = codec.Encode(t, value);
         var decoded = codec.Decode(t, encoded);
         Assert.That(decoded.IsPresent, Is.True);
