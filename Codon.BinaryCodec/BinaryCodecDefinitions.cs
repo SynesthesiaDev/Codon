@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Numerics;
 using System.Text;
 using Codon.Optionals;
 using DotNetty.Buffers;
@@ -29,6 +31,62 @@ public static class BinaryCodecDefinitions
         {
             return buffer.ReadShort();
         }
+    }
+
+    public class Vector2BinaryCodec : IBinaryCodec<Vector2>
+    {
+        public void Write(IByteBuffer buffer, Vector2 value)
+        {
+            buffer.WriteFloat(value.X);
+            buffer.WriteFloat(value.Y);
+        }
+
+        public Vector2 Read(IByteBuffer buffer) => new(buffer.ReadFloat(), buffer.ReadFloat());
+    }
+
+    public class Vector3BinaryCodec : IBinaryCodec<Vector3>
+    {
+        public void Write(IByteBuffer buffer, Vector3 value)
+        {
+            buffer.WriteFloat(value.X);
+            buffer.WriteFloat(value.Y);
+            buffer.WriteFloat(value.Z);
+        }
+
+        public Vector3 Read(IByteBuffer buffer) => new(buffer.ReadFloat(), buffer.ReadFloat(), buffer.ReadFloat());
+    }
+
+    public class Vector4BinaryCodec : IBinaryCodec<Vector4>
+    {
+        public void Write(IByteBuffer buffer, Vector4 value)
+        {
+            buffer.WriteFloat(value.X);
+            buffer.WriteFloat(value.Y);
+            buffer.WriteFloat(value.Z);
+            buffer.WriteFloat(value.X);
+        }
+
+        public Vector4 Read(IByteBuffer buffer) => new(buffer.ReadFloat(), buffer.ReadFloat(), buffer.ReadFloat(), buffer.ReadFloat());
+    }
+
+    public class RectangleFCodec : IBinaryCodec<RectangleF>
+    {
+        public void Write(IByteBuffer buffer, RectangleF value)
+        {
+            buffer.WriteFloat(value.X);
+            buffer.WriteFloat(value.Y);
+            buffer.WriteFloat(value.Width);
+            buffer.WriteFloat(value.Height);
+        }
+
+        public RectangleF Read(IByteBuffer buffer) =>
+            new RectangleF
+            (
+                buffer.ReadFloat(),
+                buffer.ReadFloat(),
+                buffer.ReadFloat(),
+                buffer.ReadFloat()
+            );
     }
 
     public class UIntBinaryCodec : IBinaryCodec<uint>

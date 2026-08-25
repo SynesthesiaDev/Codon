@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JetBrains.Util.Extension;
 
 namespace Rider.Plugins.CodonPlugin;
 
@@ -75,7 +76,7 @@ public static string For(string csharpType, bool binary, bool isEnum = false)
         foreach (var m in members)
         {
             var codec = For(m.Type, binary, m.IsEnum);
-            var accessor = m.Nullable ? $"c => Optional.Of(c.{m.Name})" : $"c => c.{m.Name}";
+            var accessor = m.Nullable ? $"c => Optional.Of<{m.Type.RemoveEnd("?")}>(c.{m.Name})" : $"c => c.{m.Name}";
 
             var nameArg = binary ? "" : $"\"{m.Name}\", ";
             sb.AppendLine($"    .Field({nameArg}{codec}, {accessor})");

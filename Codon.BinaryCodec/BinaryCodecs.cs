@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using Codon.Optionals;
 using DotNetty.Buffers;
@@ -40,6 +42,14 @@ public static class BinaryCodecs
     public static readonly IBinaryCodec<string> STRING = new BinaryCodecDefinitions.StringBinaryCodec();
 
     public static readonly IBinaryCodec<Guid> GUID = BYTE_ARRAY.Transform(guid => guid.ToByteArray(), bytes => new Guid(bytes));
+
+    public static readonly IBinaryCodec<Vector2> VECTOR_2 = new BinaryCodecDefinitions.Vector2BinaryCodec();
+
+    public static readonly IBinaryCodec<Vector3> VECTOR_3 = new BinaryCodecDefinitions.Vector3BinaryCodec();
+
+    public static readonly IBinaryCodec<Vector4> VECTOR_4 = new BinaryCodecDefinitions.Vector4BinaryCodec();
+
+    public static readonly IBinaryCodec<RectangleF> RECTANGLE_F = new BinaryCodecDefinitions.RectangleFCodec();
 
     public static IBinaryCodec<T> Recursive<T>(Func<IBinaryCodec<T>, IBinaryCodec<T>> self) where T : notnull => new BinaryCodecDefinitions.RecursiveBinaryCodec<T>(self);
 
