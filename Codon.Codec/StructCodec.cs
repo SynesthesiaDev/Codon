@@ -27,6 +27,16 @@ public abstract class StructCodec<R> : Codec<R>
         return DecodeFromMap(transcoder, transcoder.DecodeMap(value));
     }
 
+    public string EncodeToString<D>(ITranscoder<D> transcoder, R value)
+    {
+        return transcoder.EncodeObjectToString(Encode(transcoder, value));
+    }
+
+    public R DecodeFromString<D>(ITranscoder<D> transcoder, string text)
+    {
+        return Decode(transcoder, transcoder.DecodeObjectFromString(text));
+    }
+
     private static D put<D, T>(ITranscoder<D> transcoder, Codec<T> codec, IVirtualMapBuilder<D> mapBuilder, string key, T value)
     {
         if (key == INLINE)

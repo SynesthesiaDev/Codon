@@ -89,4 +89,7 @@ public interface ITranscoder<T>
         DecodeList(value).ForEach(b => list.Add(DecodeLong(b)));
         return list.ToArray();
     }
+
+    T DecodeObjectFromString(string body);
+    string EncodeObjectToString(T value);
 }

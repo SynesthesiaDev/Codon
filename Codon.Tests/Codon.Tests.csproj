@@ -28,7 +28,6 @@
     <ItemGroup>
       <ProjectReference Include="..\Codon.BinaryCodec\Codon.BinaryCodec.csproj" />
       <ProjectReference Include="..\Codon.Codec\Codon.Codec.csproj" />
-      <ProjectReference Include="..\Codon.IniTranscoder\Codon.IniTranscoder.csproj" />
   </ItemGroup>
 
 </Project>

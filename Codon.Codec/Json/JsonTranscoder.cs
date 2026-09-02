@@ -208,6 +208,13 @@ public class JsonTranscoder : ITranscoder<JsonElement>
         return longs.ToArray();
     }
 
+    public JsonElement DecodeObjectFromString(string body) => JsonDocument.Parse(body).RootElement;
+
+    public string EncodeObjectToString(JsonElement value)
+    {
+        return value.ToStringPretty();
+    }
+
     public IListBuilder<JsonElement> EncodeList(int size)
     {
         var list = new JsonArray();

@@ -8,10 +8,16 @@ namespace Codon.Codec;
 
 public static class Extensions
 {
-    private static readonly JsonSerializerOptions json_options = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions pretty_options = new JsonSerializerOptions
     {
         WriteIndented = true
     };
+
+    private static readonly JsonSerializerOptions minified_options = new JsonSerializerOptions
+    {
+        WriteIndented = false
+    };
+
 
     public static Optional<T> ToOptional<T>(this T? nullable) where T : struct
     {
@@ -29,5 +35,6 @@ public static class Extensions
 
     public static JsonElement ToJson(this string text) => JsonDocument.Parse(text).RootElement;
 
-    public static string ToStringPretty(this JsonElement jsonElement) => JsonSerializer.Serialize(jsonElement, json_options);
+    public static string ToStringPretty(this JsonElement jsonElement) => JsonSerializer.Serialize(jsonElement, pretty_options);
+    public static string ToStringMinified(this JsonElement jsonElement) => JsonSerializer.Serialize(jsonElement, minified_options);
 }
