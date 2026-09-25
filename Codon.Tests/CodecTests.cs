@@ -1,12 +1,37 @@
+using Codon.Binary;
 using Codon.Codec;
 using Codon.Codec.Json;
 using Codon.Optionals;
+using DotNetty.Buffers;
 
 namespace Codon.Tests;
 
 public class CodecTests
 {
     private const string jeson = "{\"name\":\"Synesthesia Dev\",\"age\":20}";
+
+    public record VeryLongClassWithLotOfInfo(string Test, string Field2, int Wow, string Yeah, float Bo, Guid WhatIsGuid, bool AmIGay, bool AmICool, bool AmIRunningOutOfIdeas, Guid Id, Guid UserId, Guid ProjectId, int Version, string Title, string Description, bool IsFinished)
+    {
+        public static readonly IBinaryCodec<VeryLongClassWithLotOfInfo> BINARY_CODEC = BinaryCodecs
+            .For<VeryLongClassWithLotOfInfo>()
+            .Field(BinaryCodecs.STRING, c => c.Test)
+            .Field(BinaryCodecs.STRING, c => c.Field2)
+            .Field(BinaryCodecs.INT, c => c.Wow)
+            .Field(BinaryCodecs.STRING, c => c.Yeah)
+            .Field(BinaryCodecs.FLOAT, c => c.Bo)
+            .Field(BinaryCodecs.GUID, c => c.WhatIsGuid)
+            .Field(BinaryCodecs.BOOLEAN, c => c.AmIGay)
+            .Field(BinaryCodecs.BOOLEAN, c => c.AmICool)
+            .Field(BinaryCodecs.BOOLEAN, c => c.AmIRunningOutOfIdeas)
+            .Field(BinaryCodecs.GUID, c => c.Id)
+            .Field(BinaryCodecs.GUID, c => c.UserId)
+            .Field(BinaryCodecs.GUID, c => c.ProjectId)
+            .Field(BinaryCodecs.INT, c => c.Version)
+            .Field(BinaryCodecs.STRING, c => c.Title)
+            .Field(BinaryCodecs.STRING, c => c.Description)
+            .Field(BinaryCodecs.BOOLEAN, c => c.IsFinished)
+            .Build((test, field2, wow, yeah, bo, whatisguid, amigay, amicool, amirunningoutofideas, id, userid, projectid, version, title, description, isfinished) => new VeryLongClassWithLotOfInfo(test, field2, wow, yeah, bo, whatisguid, amigay, amicool, amirunningoutofideas, id, userid, projectid, version, title, description, isfinished));
+    }
 
     public record Person(string Name, int Age, Optional<bool> IsAwesome)
     {
@@ -24,6 +49,18 @@ public class CodecTests
             .Field("passengers", Person.CODEC.List(), c => c.Passengers)
             .Field("driver", Person.CODEC.Optional(), c => c.Driver)
             .Build((model, passengers, driver) => new Car(model, passengers, driver));
+    }
+
+    [Test]
+    public void VeryLongClassTest()
+    {
+        var buffer = Unpooled.Buffer();
+        var longClass = new VeryLongClassWithLotOfInfo("a", "b", 1, "yeah", 5f, Guid.NewGuid(), true, false, true, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 0, "title", "desc", false);
+
+        VeryLongClassWithLotOfInfo.BINARY_CODEC.Write(buffer, longClass);
+        var decoded = VeryLongClassWithLotOfInfo.BINARY_CODEC.Read(buffer);
+
+        Assert.That(decoded, Is.EqualTo(longClass));
     }
 
     [Test]

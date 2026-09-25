@@ -832,34 +832,442 @@ public static class BinaryCodecDefinitions
         Func<Result, P10> getter10,
         Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, Result> func
     ) : IBinaryCodec<Result>
+{
+    public void Write(IByteBuffer buffer, Result value)
     {
-        public void Write(IByteBuffer buffer, Result value)
-        {
-            codec1.Write(buffer, getter1.Invoke(value));
-            codec2.Write(buffer, getter2.Invoke(value));
-            codec3.Write(buffer, getter3.Invoke(value));
-            codec4.Write(buffer, getter4.Invoke(value));
-            codec5.Write(buffer, getter5.Invoke(value));
-            codec6.Write(buffer, getter6.Invoke(value));
-            codec7.Write(buffer, getter7.Invoke(value));
-            codec8.Write(buffer, getter8.Invoke(value));
-            codec9.Write(buffer, getter9.Invoke(value));
-            codec10.Write(buffer, getter10.Invoke(value));
-        }
-
-        public Result Read(IByteBuffer buffer)
-        {
-            var result1 = codec1.Read(buffer);
-            var result2 = codec2.Read(buffer);
-            var result3 = codec3.Read(buffer);
-            var result4 = codec4.Read(buffer);
-            var result5 = codec5.Read(buffer);
-            var result6 = codec6.Read(buffer);
-            var result7 = codec7.Read(buffer);
-            var result8 = codec8.Read(buffer);
-            var result9 = codec9.Read(buffer);
-            var result10 = codec10.Read(buffer);
-            return func.Invoke(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10);
-        }
+        codec1.Write(buffer, getter1.Invoke(value));
+        codec2.Write(buffer, getter2.Invoke(value));
+        codec3.Write(buffer, getter3.Invoke(value));
+        codec4.Write(buffer, getter4.Invoke(value));
+        codec5.Write(buffer, getter5.Invoke(value));
+        codec6.Write(buffer, getter6.Invoke(value));
+        codec7.Write(buffer, getter7.Invoke(value));
+        codec8.Write(buffer, getter8.Invoke(value));
+        codec9.Write(buffer, getter9.Invoke(value));
+        codec10.Write(buffer, getter10.Invoke(value));
     }
+
+    public Result Read(IByteBuffer buffer)
+    {
+        var result1 = codec1.Read(buffer);
+        var result2 = codec2.Read(buffer);
+        var result3 = codec3.Read(buffer);
+        var result4 = codec4.Read(buffer);
+        var result5 = codec5.Read(buffer);
+        var result6 = codec6.Read(buffer);
+        var result7 = codec7.Read(buffer);
+        var result8 = codec8.Read(buffer);
+        var result9 = codec9.Read(buffer);
+        var result10 = codec10.Read(buffer);
+        return func.Invoke(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10);
+    }
+}
+
+public class BinaryCodecP11<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
+        Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, Result> func
+    ) : IBinaryCodec<Result>
+{
+    public void Write(IByteBuffer buffer, Result value)
+    {
+        codec1.Write(buffer, getter1.Invoke(value));
+        codec2.Write(buffer, getter2.Invoke(value));
+        codec3.Write(buffer, getter3.Invoke(value));
+        codec4.Write(buffer, getter4.Invoke(value));
+        codec5.Write(buffer, getter5.Invoke(value));
+        codec6.Write(buffer, getter6.Invoke(value));
+        codec7.Write(buffer, getter7.Invoke(value));
+        codec8.Write(buffer, getter8.Invoke(value));
+        codec9.Write(buffer, getter9.Invoke(value));
+        codec10.Write(buffer, getter10.Invoke(value));
+        codec11.Write(buffer, getter11.Invoke(value));
+    }
+
+    public Result Read(IByteBuffer buffer)
+    {
+        var result1 = codec1.Read(buffer);
+        var result2 = codec2.Read(buffer);
+        var result3 = codec3.Read(buffer);
+        var result4 = codec4.Read(buffer);
+        var result5 = codec5.Read(buffer);
+        var result6 = codec6.Read(buffer);
+        var result7 = codec7.Read(buffer);
+        var result8 = codec8.Read(buffer);
+        var result9 = codec9.Read(buffer);
+        var result10 = codec10.Read(buffer);
+        var result11 = codec11.Read(buffer);
+        return func.Invoke(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11);
+    }
+}
+
+public class BinaryCodecP12<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
+        IBinaryCodec<P12> codec12,
+        Func<Result, P12> getter12,
+        Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, Result> func
+    ) : IBinaryCodec<Result>
+{
+    public void Write(IByteBuffer buffer, Result value)
+    {
+        codec1.Write(buffer, getter1.Invoke(value));
+        codec2.Write(buffer, getter2.Invoke(value));
+        codec3.Write(buffer, getter3.Invoke(value));
+        codec4.Write(buffer, getter4.Invoke(value));
+        codec5.Write(buffer, getter5.Invoke(value));
+        codec6.Write(buffer, getter6.Invoke(value));
+        codec7.Write(buffer, getter7.Invoke(value));
+        codec8.Write(buffer, getter8.Invoke(value));
+        codec9.Write(buffer, getter9.Invoke(value));
+        codec10.Write(buffer, getter10.Invoke(value));
+        codec11.Write(buffer, getter11.Invoke(value));
+        codec12.Write(buffer, getter12.Invoke(value));
+    }
+
+    public Result Read(IByteBuffer buffer)
+    {
+        var result1 = codec1.Read(buffer);
+        var result2 = codec2.Read(buffer);
+        var result3 = codec3.Read(buffer);
+        var result4 = codec4.Read(buffer);
+        var result5 = codec5.Read(buffer);
+        var result6 = codec6.Read(buffer);
+        var result7 = codec7.Read(buffer);
+        var result8 = codec8.Read(buffer);
+        var result9 = codec9.Read(buffer);
+        var result10 = codec10.Read(buffer);
+        var result11 = codec11.Read(buffer);
+        var result12 = codec12.Read(buffer);
+        return func.Invoke(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12);
+    }
+}
+
+public class BinaryCodecP13<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
+        IBinaryCodec<P12> codec12,
+        Func<Result, P12> getter12,
+        IBinaryCodec<P13> codec13,
+        Func<Result, P13> getter13,
+        Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, Result> func
+    ) : IBinaryCodec<Result>
+{
+    public void Write(IByteBuffer buffer, Result value)
+    {
+        codec1.Write(buffer, getter1.Invoke(value));
+        codec2.Write(buffer, getter2.Invoke(value));
+        codec3.Write(buffer, getter3.Invoke(value));
+        codec4.Write(buffer, getter4.Invoke(value));
+        codec5.Write(buffer, getter5.Invoke(value));
+        codec6.Write(buffer, getter6.Invoke(value));
+        codec7.Write(buffer, getter7.Invoke(value));
+        codec8.Write(buffer, getter8.Invoke(value));
+        codec9.Write(buffer, getter9.Invoke(value));
+        codec10.Write(buffer, getter10.Invoke(value));
+        codec11.Write(buffer, getter11.Invoke(value));
+        codec12.Write(buffer, getter12.Invoke(value));
+        codec13.Write(buffer, getter13.Invoke(value));
+    }
+
+    public Result Read(IByteBuffer buffer)
+    {
+        var result1 = codec1.Read(buffer);
+        var result2 = codec2.Read(buffer);
+        var result3 = codec3.Read(buffer);
+        var result4 = codec4.Read(buffer);
+        var result5 = codec5.Read(buffer);
+        var result6 = codec6.Read(buffer);
+        var result7 = codec7.Read(buffer);
+        var result8 = codec8.Read(buffer);
+        var result9 = codec9.Read(buffer);
+        var result10 = codec10.Read(buffer);
+        var result11 = codec11.Read(buffer);
+        var result12 = codec12.Read(buffer);
+        var result13 = codec13.Read(buffer);
+        return func.Invoke(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13);
+    }
+}
+
+public class BinaryCodecP14<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
+        IBinaryCodec<P12> codec12,
+        Func<Result, P12> getter12,
+        IBinaryCodec<P13> codec13,
+        Func<Result, P13> getter13,
+        IBinaryCodec<P14> codec14,
+        Func<Result, P14> getter14,
+        Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, Result> func
+    ) : IBinaryCodec<Result>
+{
+    public void Write(IByteBuffer buffer, Result value)
+    {
+        codec1.Write(buffer, getter1.Invoke(value));
+        codec2.Write(buffer, getter2.Invoke(value));
+        codec3.Write(buffer, getter3.Invoke(value));
+        codec4.Write(buffer, getter4.Invoke(value));
+        codec5.Write(buffer, getter5.Invoke(value));
+        codec6.Write(buffer, getter6.Invoke(value));
+        codec7.Write(buffer, getter7.Invoke(value));
+        codec8.Write(buffer, getter8.Invoke(value));
+        codec9.Write(buffer, getter9.Invoke(value));
+        codec10.Write(buffer, getter10.Invoke(value));
+        codec11.Write(buffer, getter11.Invoke(value));
+        codec12.Write(buffer, getter12.Invoke(value));
+        codec13.Write(buffer, getter13.Invoke(value));
+        codec14.Write(buffer, getter14.Invoke(value));
+    }
+
+    public Result Read(IByteBuffer buffer)
+    {
+        var result1 = codec1.Read(buffer);
+        var result2 = codec2.Read(buffer);
+        var result3 = codec3.Read(buffer);
+        var result4 = codec4.Read(buffer);
+        var result5 = codec5.Read(buffer);
+        var result6 = codec6.Read(buffer);
+        var result7 = codec7.Read(buffer);
+        var result8 = codec8.Read(buffer);
+        var result9 = codec9.Read(buffer);
+        var result10 = codec10.Read(buffer);
+        var result11 = codec11.Read(buffer);
+        var result12 = codec12.Read(buffer);
+        var result13 = codec13.Read(buffer);
+        var result14 = codec14.Read(buffer);
+        return func.Invoke(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13, result14);
+    }
+}
+
+public class BinaryCodecP15<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
+        IBinaryCodec<P12> codec12,
+        Func<Result, P12> getter12,
+        IBinaryCodec<P13> codec13,
+        Func<Result, P13> getter13,
+        IBinaryCodec<P14> codec14,
+        Func<Result, P14> getter14,
+        IBinaryCodec<P15> codec15,
+        Func<Result, P15> getter15,
+        Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, Result> func
+    ) : IBinaryCodec<Result>
+{
+    public void Write(IByteBuffer buffer, Result value)
+    {
+        codec1.Write(buffer, getter1.Invoke(value));
+        codec2.Write(buffer, getter2.Invoke(value));
+        codec3.Write(buffer, getter3.Invoke(value));
+        codec4.Write(buffer, getter4.Invoke(value));
+        codec5.Write(buffer, getter5.Invoke(value));
+        codec6.Write(buffer, getter6.Invoke(value));
+        codec7.Write(buffer, getter7.Invoke(value));
+        codec8.Write(buffer, getter8.Invoke(value));
+        codec9.Write(buffer, getter9.Invoke(value));
+        codec10.Write(buffer, getter10.Invoke(value));
+        codec11.Write(buffer, getter11.Invoke(value));
+        codec12.Write(buffer, getter12.Invoke(value));
+        codec13.Write(buffer, getter13.Invoke(value));
+        codec14.Write(buffer, getter14.Invoke(value));
+        codec15.Write(buffer, getter15.Invoke(value));
+    }
+
+    public Result Read(IByteBuffer buffer)
+    {
+        var result1 = codec1.Read(buffer);
+        var result2 = codec2.Read(buffer);
+        var result3 = codec3.Read(buffer);
+        var result4 = codec4.Read(buffer);
+        var result5 = codec5.Read(buffer);
+        var result6 = codec6.Read(buffer);
+        var result7 = codec7.Read(buffer);
+        var result8 = codec8.Read(buffer);
+        var result9 = codec9.Read(buffer);
+        var result10 = codec10.Read(buffer);
+        var result11 = codec11.Read(buffer);
+        var result12 = codec12.Read(buffer);
+        var result13 = codec13.Read(buffer);
+        var result14 = codec14.Read(buffer);
+        var result15 = codec15.Read(buffer);
+        return func.Invoke(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13, result14, result15);
+    }
+}
+
+public class BinaryCodecP16<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, Result>(
+        IBinaryCodec<P1> codec1,
+        Func<Result, P1> getter1,
+        IBinaryCodec<P2> codec2,
+        Func<Result, P2> getter2,
+        IBinaryCodec<P3> codec3,
+        Func<Result, P3> getter3,
+        IBinaryCodec<P4> codec4,
+        Func<Result, P4> getter4,
+        IBinaryCodec<P5> codec5,
+        Func<Result, P5> getter5,
+        IBinaryCodec<P6> codec6,
+        Func<Result, P6> getter6,
+        IBinaryCodec<P7> codec7,
+        Func<Result, P7> getter7,
+        IBinaryCodec<P8> codec8,
+        Func<Result, P8> getter8,
+        IBinaryCodec<P9> codec9,
+        Func<Result, P9> getter9,
+        IBinaryCodec<P10> codec10,
+        Func<Result, P10> getter10,
+        IBinaryCodec<P11> codec11,
+        Func<Result, P11> getter11,
+        IBinaryCodec<P12> codec12,
+        Func<Result, P12> getter12,
+        IBinaryCodec<P13> codec13,
+        Func<Result, P13> getter13,
+        IBinaryCodec<P14> codec14,
+        Func<Result, P14> getter14,
+        IBinaryCodec<P15> codec15,
+        Func<Result, P15> getter15,
+        IBinaryCodec<P16> codec16,
+        Func<Result, P16> getter16,
+        Func<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, Result> func
+    ) : IBinaryCodec<Result>
+{
+    public void Write(IByteBuffer buffer, Result value)
+    {
+        codec1.Write(buffer, getter1.Invoke(value));
+        codec2.Write(buffer, getter2.Invoke(value));
+        codec3.Write(buffer, getter3.Invoke(value));
+        codec4.Write(buffer, getter4.Invoke(value));
+        codec5.Write(buffer, getter5.Invoke(value));
+        codec6.Write(buffer, getter6.Invoke(value));
+        codec7.Write(buffer, getter7.Invoke(value));
+        codec8.Write(buffer, getter8.Invoke(value));
+        codec9.Write(buffer, getter9.Invoke(value));
+        codec10.Write(buffer, getter10.Invoke(value));
+        codec11.Write(buffer, getter11.Invoke(value));
+        codec12.Write(buffer, getter12.Invoke(value));
+        codec13.Write(buffer, getter13.Invoke(value));
+        codec14.Write(buffer, getter14.Invoke(value));
+        codec15.Write(buffer, getter15.Invoke(value));
+        codec16.Write(buffer, getter16.Invoke(value));
+    }
+
+    public Result Read(IByteBuffer buffer)
+    {
+        var result1 = codec1.Read(buffer);
+        var result2 = codec2.Read(buffer);
+        var result3 = codec3.Read(buffer);
+        var result4 = codec4.Read(buffer);
+        var result5 = codec5.Read(buffer);
+        var result6 = codec6.Read(buffer);
+        var result7 = codec7.Read(buffer);
+        var result8 = codec8.Read(buffer);
+        var result9 = codec9.Read(buffer);
+        var result10 = codec10.Read(buffer);
+        var result11 = codec11.Read(buffer);
+        var result12 = codec12.Read(buffer);
+        var result13 = codec13.Read(buffer);
+        var result14 = codec14.Read(buffer);
+        var result15 = codec15.Read(buffer);
+        var result16 = codec16.Read(buffer);
+        return func.Invoke(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13, result14, result15, result16);
+    }
+}
 }
